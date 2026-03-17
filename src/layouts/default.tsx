@@ -1,5 +1,3 @@
-import { Link } from "@heroui/link";
-
 import { Navbar } from "@/components/navbar";
 
 export default function DefaultLayout({
@@ -13,16 +11,8 @@ export default function DefaultLayout({
       <main className="container mx-auto max-w-7xl px-6 flex-grow pt-16">
         {children}
       </main>
-      <footer className="w-full flex items-center justify-center py-3">
-        <Link
-          isExternal
-          className="flex items-center gap-1 text-xs"
-          href="https://shuyuan.dev"
-          title="shuyuan.dev homepage"
-        >
-          <span className="text-default-600">Made by</span>
-          <p className="text-primary">shuyuan</p>
-        </Link>
+      <footer className="w-full flex justify-center py-3 gap-1 text-xs font-mono">
+        <span>Made by shu.</span>
       </footer>
     </div>
   );
