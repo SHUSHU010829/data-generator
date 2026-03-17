@@ -8,7 +8,7 @@ import {
 
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
-import { Logo } from "@/components/icons";
+// import { Logo } from "@/components/icons";
 
 export const Navbar = () => {
   return (
@@ -20,7 +20,7 @@ export const Navbar = () => {
             color="foreground"
             href="/"
           >
-            <Logo />
+            {/* <Logo /> */}
             <p className="font-bold text-inherit">{siteConfig.name}</p>
           </Link>
         </NavbarBrand>
