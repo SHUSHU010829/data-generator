@@ -2,6 +2,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Switch } from '@heroui/switch';
 import { Select, SelectItem } from '@heroui/select';
+import { Input } from '@heroui/input';
 
 import type { FieldConfig, IdType, YearFormat } from '@/types/generator';
 
@@ -9,9 +10,10 @@ interface FieldCardProps {
   field: FieldConfig;
   onToggle: (key: string) => void;
   onOptionChange: (key: string, optionKey: string, value: string) => void;
+  onJsonKeyChange: (key: string, jsonKey: string) => void;
 }
 
-export function FieldCard({ field, onToggle, onOptionChange }: FieldCardProps) {
+export function FieldCard({ field, onToggle, onOptionChange, onJsonKeyChange }: FieldCardProps) {
   const {
     attributes,
     listeners,
@@ -63,6 +65,16 @@ export function FieldCard({ field, onToggle, onOptionChange }: FieldCardProps) {
       >
         {field.label}
       </Switch>
+
+      {/* JSON 欄位名稱 */}
+      <Input
+        label="JSON 欄位名稱"
+        size="sm"
+        className="w-40"
+        value={field.jsonKey ?? field.key}
+        isDisabled={!field.enabled}
+        onChange={(e) => onJsonKeyChange(field.key, e.target.value)}
+      />
 
       {/* 證件號碼的選項 */}
       {field.key === 'idNumber' && field.options && (

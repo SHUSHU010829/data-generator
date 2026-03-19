@@ -36,6 +36,7 @@ export interface FieldConfig {
   key: FieldType;
   label: string;
   enabled: boolean;
+  jsonKey?: string; // JSON 輸出時的自訂欄位名稱，預設為 key
   options?: {
     // 證件號碼欄位的選項
     idType?: IdType;

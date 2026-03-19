@@ -57,6 +57,13 @@ export function FieldSelector({ fields, onFieldsChange }: FieldSelectorProps) {
     onFieldsChange(newFields);
   };
 
+  const handleJsonKeyChange = (key: string, jsonKey: string) => {
+    const newFields = fields.map((field) =>
+      field.key === key ? { ...field, jsonKey } : field
+    );
+    onFieldsChange(newFields);
+  };
+
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
@@ -119,6 +126,7 @@ export function FieldSelector({ fields, onFieldsChange }: FieldSelectorProps) {
                     field={field}
                     onToggle={handleToggle}
                     onOptionChange={handleOptionChange}
+                    onJsonKeyChange={handleJsonKeyChange}
                   />
                 ))}
               </div>
