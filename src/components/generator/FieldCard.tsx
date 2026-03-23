@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Switch } from '@heroui/switch';
@@ -13,7 +14,7 @@ interface FieldCardProps {
   onJsonKeyChange: (key: string, jsonKey: string) => void;
 }
 
-export function FieldCard({ field, onToggle, onOptionChange, onJsonKeyChange }: FieldCardProps) {
+export const FieldCard = memo(function FieldCard({ field, onToggle, onOptionChange, onJsonKeyChange }: FieldCardProps) {
   const {
     attributes,
     listeners,
@@ -46,71 +47,80 @@ export function FieldCard({ field, onToggle, onOptionChange, onJsonKeyChange }: 
     <div
       ref={setNodeRef}
       style={style}
-      className="flex items-center gap-3 p-3 rounded-lg bg-default-50 hover:bg-default-100 transition-colors"
+      className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 rounded-lg bg-default-50 hover:bg-default-100 transition-colors"
     >
-      {/* 拖曳手把 */}
-      <div
-        {...attributes}
-        {...listeners}
-        className="cursor-grab active:cursor-grabbing text-default-400 hover:text-default-600 text-lg"
-      >
-        ☰
+      {/* 第一排：拖曳手把 + Switch */}
+      <div className="flex items-center gap-3">
+        {/* 拖曳手把 */}
+        <div
+          {...attributes}
+          {...listeners}
+          className="cursor-grab active:cursor-grabbing text-default-400 hover:text-default-600 text-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded p-1 min-h-[44px] flex items-center justify-center min-w-[44px]"
+          role="button"
+          aria-label={`拖曳以調整 ${field.label} 的順序`}
+          tabIndex={0}
+        >
+          ☰
+        </div>
+
+        {/* Switch 開關 */}
+        <Switch
+          isSelected={field.enabled}
+          onValueChange={() => onToggle(field.key)}
+          size="sm"
+        >
+          {field.label}
+        </Switch>
       </div>
 
-      {/* Switch 開關 */}
-      <Switch
-        isSelected={field.enabled}
-        onValueChange={() => onToggle(field.key)}
-        size="sm"
-      >
-        {field.label}
-      </Switch>
-
-      {/* JSON 欄位名稱 */}
-      <Input
-        label="JSON 欄位名稱"
-        size="sm"
-        className="w-40"
-        value={field.jsonKey ?? field.key}
-        isDisabled={!field.enabled}
-        onChange={(e) => onJsonKeyChange(field.key, e.target.value)}
-      />
-
-      {/* 證件號碼的選項 */}
-      {field.key === 'idNumber' && field.options && (
-        <Select
-          label="證件類型"
+      {/* 第二排：JSON 欄位名稱 + 選項 */}
+      <div className="flex flex-col sm:flex-row gap-3 sm:ml-auto w-full sm:w-auto">
+        {/* JSON 欄位名稱 */}
+        <Input
+          label="JSON 欄位名稱"
           size="sm"
-          className="w-32 ml-auto"
-          selectedKeys={[field.options.idType || 'random']}
+          className="w-full sm:w-40"
+          value={field.jsonKey ?? field.key}
           isDisabled={!field.enabled}
-          onChange={(e) => onOptionChange(field.key, 'idType', e.target.value)}
-        >
-          {idTypeOptions.map((option) => (
-            <SelectItem key={option.key}>
-              {option.label}
-            </SelectItem>
-          ))}
-        </Select>
-      )}
+          onChange={(e) => onJsonKeyChange(field.key, e.target.value)}
+        />
 
-      {/* 生日的選項 */}
-      {field.key === 'birthday' && field.options && (
-        <Select
-          label="年份格式"
-          size="sm"
-          className="w-32 ml-auto"
-          selectedKeys={[field.options.yearFormat || 'western']}
-          isDisabled={!field.enabled}
-          onChange={(e) => onOptionChange(field.key, 'yearFormat', e.target.value)}
-        >
-          {yearFormatOptions.map((option) => (
-            <SelectItem key={option.key}>
-              {option.label}
-            </SelectItem>
-          ))}
-        </Select>
-      )}
+        {/* 證件號碼的選項 */}
+        {field.key === 'idNumber' && field.options && (
+          <Select
+            label="證件類型"
+            size="sm"
+            className="w-full sm:w-32"
+            selectedKeys={[field.options.idType || 'random']}
+            isDisabled={!field.enabled}
+            onChange={(e) => onOptionChange(field.key, 'idType', e.target.value)}
+          >
+            {idTypeOptions.map((option) => (
+              <SelectItem key={option.key}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </Select>
+        )}
+
+        {/* 生日的選項 */}
+        {field.key === 'birthday' && field.options && (
+          <Select
+            label="年份格式"
+            size="sm"
+            className="w-full sm:w-32"
+            selectedKeys={[field.options.yearFormat || 'western']}
+            isDisabled={!field.enabled}
+            onChange={(e) => onOptionChange(field.key, 'yearFormat', e.target.value)}
+          >
+            {yearFormatOptions.map((option) => (
+              <SelectItem key={option.key}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </Select>
+        )}
+      </div>
     </div>
   );
-}
+});

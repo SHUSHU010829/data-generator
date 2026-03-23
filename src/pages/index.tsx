@@ -58,9 +58,9 @@ export default function IndexPage() {
 
   return (
     <DefaultLayout>
-      <section className="flex flex-col items-center justify-center gap-6 py-8 md:py-10">
-        <div className="w-full max-w-screen-xl px-6">
-          <div className="flex flex-col gap-6">
+      <section className="flex flex-col items-center justify-center gap-4 sm:gap-6">
+        <div className="w-full max-w-screen-xl">
+          <div className="flex flex-col gap-4 sm:gap-6">
             <GeneratorForm
               gender={gender}
               count={count}

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, memo, useCallback, useMemo } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -25,7 +25,7 @@ interface FieldSelectorProps {
   onFieldsChange: (fields: FieldConfig[]) => void;
 }
 
-export function FieldSelector({ fields, onFieldsChange }: FieldSelectorProps) {
+export const FieldSelector = memo(function FieldSelector({ fields, onFieldsChange }: FieldSelectorProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const sensors = useSensors(
@@ -35,14 +35,14 @@ export function FieldSelector({ fields, onFieldsChange }: FieldSelectorProps) {
     })
   );
 
-  const handleToggle = (key: string) => {
+  const handleToggle = useCallback((key: string) => {
     const newFields = fields.map((field) =>
       field.key === key ? { ...field, enabled: !field.enabled } : field
     );
     onFieldsChange(newFields);
-  };
+  }, [fields, onFieldsChange]);
 
-  const handleOptionChange = (key: string, optionKey: string, value: string) => {
+  const handleOptionChange = useCallback((key: string, optionKey: string, value: string) => {
     const newFields = fields.map((field) =>
       field.key === key
         ? {
@@ -55,16 +55,16 @@ export function FieldSelector({ fields, onFieldsChange }: FieldSelectorProps) {
         : field
     );
     onFieldsChange(newFields);
-  };
+  }, [fields, onFieldsChange]);
 
-  const handleJsonKeyChange = (key: string, jsonKey: string) => {
+  const handleJsonKeyChange = useCallback((key: string, jsonKey: string) => {
     const newFields = fields.map((field) =>
       field.key === key ? { ...field, jsonKey } : field
     );
     onFieldsChange(newFields);
-  };
+  }, [fields, onFieldsChange]);
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
@@ -73,32 +73,42 @@ export function FieldSelector({ fields, onFieldsChange }: FieldSelectorProps) {
       const newFields = arrayMove(fields, oldIndex, newIndex);
       onFieldsChange(newFields);
     }
-  };
+  }, [fields, onFieldsChange]);
 
-  const handleSelectAll = () => {
+  const handleSelectAll = useCallback(() => {
     const newFields = fields.map((field) => ({ ...field, enabled: true }));
     onFieldsChange(newFields);
-  };
+  }, [fields, onFieldsChange]);
 
-  const handleDeselectAll = () => {
+  const handleDeselectAll = useCallback(() => {
     const newFields = fields.map((field) => ({ ...field, enabled: false }));
     onFieldsChange(newFields);
-  };
+  }, [fields, onFieldsChange]);
 
-  const enabledCount = fields.filter((f) => f.enabled).length;
+  const enabledCount = useMemo(() => fields.filter((f) => f.enabled).length, [fields]);
 
   return (
     <Card className="w-full p-2">
       <CardHeader
-        className="flex justify-between cursor-pointer hover:bg-default-100 transition-colors rounded-lg"
+        className="flex justify-between cursor-pointer hover:bg-default-100 transition-colors rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
         onClick={() => setIsExpanded(!isExpanded)}
+        role="button"
+        tabIndex={0}
+        aria-expanded={isExpanded}
+        aria-label={`欄位設定，目前${isExpanded ? '展開' : '收合'}，已選取 ${enabledCount} 個欄位`}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            setIsExpanded(!isExpanded);
+          }
+        }}
       >
         <div className="flex items-center gap-3">
           <h3 className="text-lg font-semibold">欄位設定</h3>
           <span className="text-sm text-default-500">
             ({enabledCount}/{fields.length} 個欄位)
           </span>
-          <span className="text-default-400">{isExpanded ? '▼' : '▶'}</span>
+          <span className="text-default-400" aria-hidden="true">{isExpanded ? '▼' : '▶'}</span>
         </div>
         {isExpanded && (
           <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
@@ -136,4 +146,4 @@ export function FieldSelector({ fields, onFieldsChange }: FieldSelectorProps) {
       )}
     </Card>
   );
-}
+});

@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Card, CardBody } from "@heroui/card";
 import { Select, SelectItem } from "@heroui/select";
 import { Input } from "@heroui/input";
@@ -18,7 +19,7 @@ interface GeneratorFormProps {
   onGenerate: () => void;
 }
 
-export function GeneratorForm({
+export const GeneratorForm = memo(function GeneratorForm({
   gender,
   count,
   separator,
@@ -50,25 +51,48 @@ export function GeneratorForm({
             <Input
               type="number"
               label="生成數量"
-              placeholder="輸入數量"
+              placeholder="輸入數量 (1-100)"
+              description="最少 1 筆，最多 100 筆"
               value={count.toString()}
               min={1}
               max={100}
               className="flex-1"
-              onChange={(e) =>
-                onCountChange(
-                  Math.min(100, Math.max(1, parseInt(e.target.value) || 1)),
-                )
-              }
+              onChange={(e) => {
+                const value = e.target.value;
+                // 允許空值以便用戶刪除
+                if (value === '') {
+                  onCountChange(1);
+                  return;
+                }
+                const num = parseInt(value);
+                // 驗證是否為有效數字
+                if (isNaN(num)) {
+                  onCountChange(1);
+                  return;
+                }
+                // 限制範圍
+                onCountChange(Math.min(100, Math.max(1, num)));
+              }}
+              onBlur={(e) => {
+                // 失焦時確保有效值
+                const num = parseInt(e.target.value);
+                if (isNaN(num) || num < 1) {
+                  onCountChange(1);
+                } else if (num > 100) {
+                  onCountChange(100);
+                }
+              }}
             />
           </div>
 
           {/* 第二排：分隔符號、流水編號 */}
           <div className="flex flex-col gap-4 md:flex-row">
             <Input
-              label="欄位分隔符號（預設為空白）"
-              placeholder="預設為空白"
+              label="欄位分隔符號"
+              placeholder="例：空白、逗號、分號"
+              description="留空表示使用空白分隔"
               value={separator}
+              maxLength={5}
               className="flex-1"
               onChange={(e) => onSeparatorChange(e.target.value)}
             />
@@ -106,4 +130,4 @@ export function GeneratorForm({
       </CardBody>
     </Card>
   );
-}
+});
