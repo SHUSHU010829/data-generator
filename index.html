@@ -2,24 +2,59 @@
 <html lang="zh-TW">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>台灣個資生成器</title>
-    <meta key="title" content="台灣個資生成器" property="og:title" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>台灣個資生成器 — 快速產生台灣格式測試資料</title>
+
+    <!-- SEO Meta -->
     <meta
-      content="快速生成符合台灣格式的測試資料，支援身分證字號或居留證號碼（擇一）、姓名、地址和手機號碼"
-      property="og:description"
-    />
-    <meta
-      content="快速生成符合台灣格式的測試資料，支援身分證字號或居留證號碼（擇一）、姓名、地址和手機號碼"
       name="description"
+      content="免費線上台灣假資料產生器，快速生成符合台灣格式的測試資料，支援身分證字號、居留證號碼、姓名、地址和手機號碼，適用於軟體開發與測試。"
     />
+    <meta name="keywords" content="台灣個資生成器,假資料產生器,測試資料,身分證字號產生器,台灣地址產生器,居留證號碼,手機號碼產生" />
+    <link rel="canonical" href="https://data-generator-beta.vercel.app/" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://data-generator-beta.vercel.app/" />
+    <meta property="og:title" content="台灣個資生成器 — 快速產生台灣格式測試資料" />
     <meta
-      key="viewport"
-      content="viewport-fit=cover, width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
-      name="viewport"
+      property="og:description"
+      content="免費線上台灣假資料產生器，快速生成符合台灣格式的測試資料，支援身分證字號、居留證號碼、姓名、地址和手機號碼。"
     />
-    <link href="/favicon.ico" rel="icon" />
+    <meta property="og:locale" content="zh_TW" />
+    <meta property="og:site_name" content="台灣個資生成器" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="台灣個資生成器 — 快速產生台灣格式測試資料" />
+    <meta
+      name="twitter:description"
+      content="免費線上台灣假資料產生器，快速生成符合台灣格式的測試資料，支援身分證字號、居留證號碼、姓名、地址和手機號碼。"
+    />
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "台灣個資生成器",
+        "url": "https://data-generator-beta.vercel.app/",
+        "description": "免費線上台灣假資料產生器，快速生成符合台灣格式的測試資料，支援身分證字號、居留證號碼、姓名、地址和手機號碼。",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "All",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "TWD"
+        },
+        "inLanguage": "zh-TW"
+      }
+    </script>
+
+    <!-- Favicon & Manifest -->
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#000000" />
   </head>
   <body>
     <div id="root"></div>

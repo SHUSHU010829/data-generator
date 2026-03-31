@@ -1,0 +1,17 @@
+{
+  "name": "台灣個資生成器",
+  "short_name": "個資生成器",
+  "description": "免費線上台灣假資料產生器，快速生成符合台灣格式的測試資料",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "lang": "zh-TW",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    }
+  ]
+}
