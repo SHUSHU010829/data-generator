@@ -57,4 +57,5 @@ export interface FakeData {
   bloodType: string; // 血型
   email: string; // 電子郵件
   gender: 'male' | 'female'; // 實際性別（不含 random）
+  isForeigner: boolean; // 是否為外國人（持居留證）
 }
