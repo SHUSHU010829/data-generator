@@ -22,7 +22,7 @@ export default function IndexPage() {
       label: '證件號碼',
       enabled: true,
       jsonKey: 'idNumber',
-      options: { idType: 'random' }
+      options: { idType: 'nationalId' }
     },
     { key: 'zipCode', label: '郵遞區號', enabled: true, jsonKey: 'zipCode' },
     { key: 'address', label: '地址', enabled: true, jsonKey: 'address' },

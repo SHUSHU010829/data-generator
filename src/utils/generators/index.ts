@@ -56,6 +56,7 @@ export function generateSingleData(config: GeneratorConfig): FakeData {
     bloodType: generateBloodType(),
     email: generateEmail(englishName),
     gender: actualGender,
+    isForeigner: actualIdType === 'residentCert',
   };
 }
 

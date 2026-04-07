@@ -221,12 +221,19 @@ export function DataTable({ data, separator, fields, includeId }: DataTableProps
   const renderRow = useCallback((row: FakeData, index: number) => {
     return [
       <TableCell key="gender">
-        <Chip
-          color={row.gender === "male" ? "primary" : "secondary"}
-          size="sm"
-        >
-          {row.gender === "male" ? "男" : "女"}
-        </Chip>
+        <div className="flex items-center gap-1">
+          <Chip
+            color={row.gender === "male" ? "primary" : "secondary"}
+            size="sm"
+          >
+            {row.gender === "male" ? "男" : "女"}
+          </Chip>
+          {row.isForeigner && (
+            <Chip color="warning" size="sm" variant="flat">
+              外國人
+            </Chip>
+          )}
+        </div>
       </TableCell>,
       ...enabledFields.map((field) => (
         <TableCell key={field.key}>
@@ -294,12 +301,19 @@ export function DataTable({ data, separator, fields, includeId }: DataTableProps
                 className="p-4 rounded-lg bg-default-50 border border-default-200"
               >
                 <div className="flex items-center justify-between mb-3">
-                  <Chip
-                    color={row.gender === "male" ? "primary" : "secondary"}
-                    size="sm"
-                  >
-                    {row.gender === "male" ? "男" : "女"}
-                  </Chip>
+                  <div className="flex items-center gap-1">
+                    <Chip
+                      color={row.gender === "male" ? "primary" : "secondary"}
+                      size="sm"
+                    >
+                      {row.gender === "male" ? "男" : "女"}
+                    </Chip>
+                    {row.isForeigner && (
+                      <Chip color="warning" size="sm" variant="flat">
+                        外國人
+                      </Chip>
+                    )}
+                  </div>
                   <Button
                     size="sm"
                     variant="flat"
