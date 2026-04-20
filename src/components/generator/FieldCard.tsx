@@ -1,9 +1,9 @@
 import { memo } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Switch } from '@heroui/switch';
-import { Select, SelectItem } from '@heroui/select';
-import { Input } from '@heroui/input';
+import { motion } from 'framer-motion';
+import clsx from 'clsx';
+import { GlassSwitch, GlassInput, SegmentedControl } from '@/components/ui';
 
 import type { FieldConfig, IdType, YearFormat } from '@/types/generator';
 
@@ -13,6 +13,29 @@ interface FieldCardProps {
   onOptionChange: (key: string, optionKey: string, value: string) => void;
   onJsonKeyChange: (key: string, jsonKey: string) => void;
 }
+
+const idTypeOptions: { value: IdType; label: string }[] = [
+  { value: 'random', label: '隨機' },
+  { value: 'nationalId', label: '身分證' },
+  { value: 'residentCert', label: '居留證' },
+];
+
+const yearFormatOptions: { value: YearFormat; label: string }[] = [
+  { value: 'western', label: '西元年' },
+  { value: 'minguo', label: '民國年' },
+];
+
+/* 六點拖曳 handle icon */
+const DragIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+    <circle cx="4" cy="3" r="1.2" fill="currentColor"/>
+    <circle cx="4" cy="7" r="1.2" fill="currentColor"/>
+    <circle cx="4" cy="11" r="1.2" fill="currentColor"/>
+    <circle cx="10" cy="3" r="1.2" fill="currentColor"/>
+    <circle cx="10" cy="7" r="1.2" fill="currentColor"/>
+    <circle cx="10" cy="11" r="1.2" fill="currentColor"/>
+  </svg>
+);
 
 export const FieldCard = memo(function FieldCard({ field, onToggle, onOptionChange, onJsonKeyChange }: FieldCardProps) {
   const {
@@ -27,100 +50,84 @@ export const FieldCard = memo(function FieldCard({ field, onToggle, onOptionChan
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.5 : 1,
   };
 
-  // 證件類型選項
-  const idTypeOptions: { key: IdType; label: string }[] = [
-    { key: 'random', label: '隨機' },
-    { key: 'nationalId', label: '身分證' },
-    { key: 'residentCert', label: '居留證' },
-  ];
-
-  // 年份格式選項
-  const yearFormatOptions: { key: YearFormat; label: string }[] = [
-    { key: 'western', label: '西元年' },
-    { key: 'minguo', label: '民國年' },
-  ];
-
   return (
-    <div
+    <motion.div
       ref={setNodeRef}
       style={style}
-      className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 rounded-lg bg-default-50 hover:bg-default-100 transition-colors"
+      animate={{ opacity: isDragging ? 0.5 : 1 }}
+      transition={{ duration: 0.15 }}
+      className={clsx(
+        'flex flex-col sm:flex-row sm:items-center gap-3',
+        'p-3 rounded-[var(--radius-md)]',
+        'glass-interactive',
+        isDragging && 'z-10',
+      )}
     >
-      {/* 第一排：拖曳手把 + Switch */}
-      <div className="flex items-center gap-3">
+      {/* 左側：拖曳手把 + Switch */}
+      <div className="flex items-center gap-3 flex-shrink-0">
         {/* 拖曳手把 */}
         <div
           {...attributes}
           {...listeners}
-          className="cursor-grab active:cursor-grabbing text-default-400 hover:text-default-600 text-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded p-1 min-h-[44px] flex items-center justify-center min-w-[44px]"
+          className={clsx(
+            'cursor-grab active:cursor-grabbing',
+            'text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]',
+            'transition-colors duration-[var(--dur-fast)]',
+            'focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 rounded',
+            'min-h-[44px] min-w-[44px] flex items-center justify-center',
+          )}
           role="button"
           aria-label={`拖曳以調整 ${field.label} 的順序`}
           tabIndex={0}
         >
-          ☰
+          <DragIcon />
         </div>
 
         {/* Switch 開關 */}
-        <Switch
-          isSelected={field.enabled}
-          onValueChange={() => onToggle(field.key)}
+        <GlassSwitch
+          checked={field.enabled}
+          onChange={() => onToggle(field.key)}
+          label={field.label}
           size="sm"
-        >
-          {field.label}
-        </Switch>
+        />
       </div>
 
-      {/* 第二排：JSON 欄位名稱 + 選項 */}
-      <div className="flex flex-col sm:flex-row gap-3 sm:ml-auto w-full sm:w-auto">
-        {/* JSON 欄位名稱 */}
-        <Input
+      {/* 右側：JSON 欄位名稱 + 選項 */}
+      <div className="flex flex-col sm:flex-row gap-2.5 sm:ml-auto w-full sm:w-auto">
+        <GlassInput
           label="JSON 欄位名稱"
-          size="sm"
-          className="w-full sm:w-40"
+          wrapperClassName="w-full sm:w-44"
           value={field.jsonKey ?? field.key}
-          isDisabled={!field.enabled}
+          disabled={!field.enabled}
           onChange={(e) => onJsonKeyChange(field.key, e.target.value)}
         />
 
-        {/* 證件號碼的選項 */}
         {field.key === 'idNumber' && field.options && (
-          <Select
+          <SegmentedControl
             label="證件類型"
+            options={idTypeOptions}
+            value={field.options.idType ?? 'random'}
+            onChange={(v) => onOptionChange(field.key, 'idType', v)}
+            disabled={!field.enabled}
             size="sm"
-            className="w-full sm:w-32"
-            selectedKeys={[field.options.idType || 'random']}
-            isDisabled={!field.enabled}
-            onChange={(e) => onOptionChange(field.key, 'idType', e.target.value)}
-          >
-            {idTypeOptions.map((option) => (
-              <SelectItem key={option.key}>
-                {option.label}
-              </SelectItem>
-            ))}
-          </Select>
+            className="w-full sm:w-auto"
+          />
         )}
 
-        {/* 生日的選項 */}
         {field.key === 'birthday' && field.options && (
-          <Select
+          <SegmentedControl
             label="年份格式"
+            options={yearFormatOptions}
+            value={field.options.yearFormat ?? 'western'}
+            onChange={(v) => onOptionChange(field.key, 'yearFormat', v)}
+            disabled={!field.enabled}
             size="sm"
-            className="w-full sm:w-32"
-            selectedKeys={[field.options.yearFormat || 'western']}
-            isDisabled={!field.enabled}
-            onChange={(e) => onOptionChange(field.key, 'yearFormat', e.target.value)}
-          >
-            {yearFormatOptions.map((option) => (
-              <SelectItem key={option.key}>
-                {option.label}
-              </SelectItem>
-            ))}
-          </Select>
+            className="w-full sm:w-auto"
+          />
         )}
       </div>
-    </div>
+    </motion.div>
   );
 });

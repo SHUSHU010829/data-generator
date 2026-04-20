@@ -1,16 +1,8 @@
 import { useState, useCallback, useMemo } from "react";
-import { Card, CardBody, CardHeader } from "@heroui/card";
-import {
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
-} from "@heroui/table";
-import { Button } from "@heroui/button";
-import { Chip } from "@heroui/chip";
-import { Tooltip } from "@heroui/tooltip";
+import { motion } from "framer-motion";
+import clsx from "clsx";
+import { GlassCard, GlassButton, Chip, Tooltip, EmptyState } from "@/components/ui";
+import { useToast } from "@/hooks/useToast";
 
 import type { FakeData, FieldConfig, FieldType } from "@/types/generator";
 
@@ -23,351 +15,310 @@ interface DataTableProps {
 
 export function DataTable({ data, separator, fields, includeId }: DataTableProps) {
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const { toast } = useToast();
 
-  // 使用 useMemo 快取計算結果
   const enabledFields = useMemo(() => fields.filter((f) => f.enabled), [fields]);
 
-  // 檢查是否所有啟用的欄位都有 jsonKey
   const hasEmptyJsonKey = useMemo(
     () => enabledFields.some((field) => !field.jsonKey || field.jsonKey.trim() === ''),
-    [enabledFields]
+    [enabledFields],
   );
 
-  // 使用 useCallback 避免函數重新建立
   const copyToClipboard = useCallback(async (text: string, id: string) => {
+    if (!navigator.clipboard) {
+      toast({ title: '複製失敗', description: '您的瀏覽器不支援自動複製功能', variant: 'error' });
+      return false;
+    }
     try {
-      // 檢查是否支援 Clipboard API
-      if (!navigator.clipboard) {
-        console.warn("您的瀏覽器不支援自動複製功能");
-        return;
-      }
-
       await navigator.clipboard.writeText(text);
       setCopiedId(id);
       setTimeout(() => setCopiedId(null), 2000);
+      return true;
     } catch (err) {
-      console.error("複製失敗:", err);
-
-      // 提供明確的錯誤訊息
-      console.error("複製失敗", err);
+      toast({ title: '複製失敗', description: '請手動選取並複製', variant: 'error' });
+      console.error('複製失敗:', err);
+      return false;
     }
-  }, []);
+  }, [toast]);
 
-  // 複製整列資料
   const copyRow = useCallback(async (row: FakeData, index: number) => {
     const values = enabledFields.map((field) => row[field.key]);
     const text = values.join(separator);
-    await copyToClipboard(text, `row-${index}`);
-  }, [enabledFields, separator, copyToClipboard]);
+    const ok = await copyToClipboard(text, `row-${index}`);
+    if (ok) toast({ title: '已複製列資料', variant: 'success' });
+  }, [enabledFields, separator, copyToClipboard, toast]);
 
-  // 格式化單筆資料（純數值）
   const formatRowPlain = useCallback((row: FakeData, index: number): string => {
     const values: (string | number)[] = [];
-    if (includeId) {
-      values.push(index + 1);
-    }
-    enabledFields.forEach((field) => {
-      values.push(row[field.key]);
-    });
+    if (includeId) values.push(index + 1);
+    enabledFields.forEach((field) => values.push(row[field.key]));
     return values.join(separator);
   }, [includeId, enabledFields, separator]);
 
-  // 格式化單筆資料（JSON）
   const formatRowJson = useCallback((row: FakeData, index: number): string => {
     const obj: Record<string, string | number> = {};
-    if (includeId) {
-      obj.id = index + 1;
-    }
-    enabledFields.forEach((field) => {
-      const jsonKey = field.jsonKey || field.key;
-      obj[jsonKey] = row[field.key];
-    });
+    if (includeId) obj.id = index + 1;
+    enabledFields.forEach((field) => { obj[field.jsonKey || field.key] = row[field.key]; });
     return JSON.stringify(obj);
   }, [includeId, enabledFields]);
 
-  // 格式化全部資料（純數值）
-  const formatAllDataPlain = useCallback((): string => {
-    return data.map((row, index) => formatRowPlain(row, index)).join('\n');
-  }, [data, formatRowPlain]);
-
-  // 格式化全部資料（JSON）
-  const formatAllDataJson = useCallback((): string => {
-    return data.map((row, index) => formatRowJson(row, index)).join('\n');
-  }, [data, formatRowJson]);
-
-  // 複製全部資料（純數值）
   const copyAllData = useCallback(async () => {
-    const text = formatAllDataPlain();
-    await copyToClipboard(text, 'all-data');
-  }, [formatAllDataPlain, copyToClipboard]);
+    const text = data.map((row, i) => formatRowPlain(row, i)).join('\n');
+    const ok = await copyToClipboard(text, 'all-data');
+    if (ok) toast({ title: `已複製全部 ${data.length} 筆資料`, variant: 'success' });
+  }, [data, formatRowPlain, copyToClipboard, toast]);
 
-  // 下載為 txt 檔案（純數值）
+  const downloadBlob = useCallback((content: string, type: string, ext: string) => {
+    const blob = new Blob([content], { type });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    const timestamp = new Date().toISOString().replace(/[-:]/g, '').replace('T', '_').split('.')[0];
+    link.href = url;
+    link.download = `data_${timestamp}.${ext}`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }, []);
+
   const downloadTxt = useCallback(() => {
     try {
-      const text = formatAllDataPlain();
-
-      // 檢查是否有資料
-      if (!text || text.trim() === '') {
-        console.error("沒有資料可下載");
-        return;
-      }
-
-      const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-
-      const now = new Date();
-      const timestamp = now.toISOString().replace(/[-:]/g, '').replace('T', '_').split('.')[0];
-      const filename = `data_${timestamp}.txt`;
-
-      link.href = url;
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-
-      console.log(`已下載 ${filename}`);
+      const text = data.map((row, i) => formatRowPlain(row, i)).join('\n');
+      downloadBlob(text, 'text/plain;charset=utf-8', 'txt');
+      toast({ title: '已下載 TXT 檔案', variant: 'success' });
     } catch (err) {
-      console.error("下載失敗:", err);
-      console.error("下載失敗，請重試");
+      toast({ title: '下載失敗', description: '請重試', variant: 'error' });
+      console.error('下載失敗:', err);
     }
-  }, [formatAllDataPlain]);
+  }, [data, formatRowPlain, downloadBlob, toast]);
 
-  // 下載為 json 檔案
   const downloadJson = useCallback(() => {
-    try {
-      // 二次檢查 jsonKey（防禦性編程）
-      if (hasEmptyJsonKey) {
-        console.error("部分欄位缺少 JSON 欄位名稱，請在「欄位設定」中補充");
-        return;
-      }
-
-      const text = formatAllDataJson();
-
-      // 檢查是否有資料
-      if (!text || text.trim() === '') {
-        console.error("沒有資料可下載");
-        return;
-      }
-
-      // 驗證 JSON 格式
-      try {
-        JSON.parse(`[${text}]`);
-      } catch (parseErr) {
-        console.error("JSON 格式錯誤:", parseErr);
-        console.error("資料格式錯誤，無法生成 JSON 檔案");
-        return;
-      }
-
-      const blob = new Blob([text], { type: 'application/json;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-
-      const now = new Date();
-      const timestamp = now.toISOString().replace(/[-:]/g, '').replace('T', '_').split('.')[0];
-      const filename = `data_${timestamp}.json`;
-
-      link.href = url;
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-
-      console.log(`已下載 ${filename}`);
-    } catch (err) {
-      console.error("下載失敗:", err);
-      console.error("下載失敗，請重試");
+    if (hasEmptyJsonKey) {
+      toast({ title: '下載失敗', description: '部分欄位缺少 JSON 欄位名稱，請在欄位設定中補充', variant: 'warning' });
+      return;
     }
-  }, [hasEmptyJsonKey, formatAllDataJson]);
+    try {
+      const text = data.map((row, i) => formatRowJson(row, i)).join('\n');
+      downloadBlob(text, 'application/json;charset=utf-8', 'json');
+      toast({ title: '已下載 JSON 檔案', variant: 'success' });
+    } catch (err) {
+      toast({ title: '下載失敗', description: '請重試', variant: 'error' });
+      console.error('下載失敗:', err);
+    }
+  }, [hasEmptyJsonKey, data, formatRowJson, downloadBlob, toast]);
 
-  // 渲染欄位內容
-  const renderFieldCell = useCallback((row: FakeData, field: FieldType, index: number) => {
+  const renderCopyableCell = useCallback((row: FakeData, field: FieldType, index: number) => {
     const value = row[field];
     const copyId = `${field}-${index}`;
-
-    // 取得欄位標籤用於 aria-label
     const fieldLabel = enabledFields.find(f => f.key === field)?.label || field;
+    const isCopied = copiedId === copyId;
+    const isMono = field === 'idNumber' || field === 'zipCode' || field === 'phone';
 
     return (
       <Tooltip content="點擊複製" placement="top">
         <button
-          className={`cursor-pointer hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded px-1 ${field === 'idNumber' || field === 'zipCode' || field === 'phone' ? 'font-mono' : ''}`}
+          className={clsx(
+            'cursor-pointer rounded px-1 py-0.5',
+            'text-[var(--text-primary)] hover:text-accent',
+            'transition-colors duration-[var(--dur-fast)]',
+            'focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2',
+            isMono && 'font-mono text-xs',
+          )}
           onClick={() => copyToClipboard(value, copyId)}
           aria-label={`複製${fieldLabel}：${value}`}
         >
           {value}
-          {copiedId === copyId && (
-            <span className="ml-2 text-xs text-success" aria-hidden="true">✓</span>
+          {isCopied && (
+            <span className="ml-1.5 text-xs text-success" aria-live="polite">✓</span>
           )}
         </button>
       </Tooltip>
     );
   }, [enabledFields, copiedId, copyToClipboard]);
 
-  // 生成表格列標題
-  const columns = useMemo(() => {
-    return [
-      <TableColumn key="gender">性別</TableColumn>,
-      ...enabledFields.map((field) => (
-        <TableColumn key={field.key}>{field.label}</TableColumn>
-      )),
-      <TableColumn key="actions">操作</TableColumn>,
-    ];
-  }, [enabledFields]);
-
-  // 生成表格行內容
-  const renderRow = useCallback((row: FakeData, index: number) => {
-    return [
-      <TableCell key="gender">
-        <div className="flex items-center gap-1">
-          <Chip
-            color={row.gender === "male" ? "primary" : "secondary"}
-            size="sm"
-          >
-            {row.gender === "male" ? "男" : "女"}
-          </Chip>
-          {row.isForeigner && (
-            <Chip color="warning" size="sm" variant="flat">
-              外國人
-            </Chip>
+  return (
+    <GlassCard padding="none">
+      {/* Header */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between px-5 pt-5 pb-4">
+        <div className="flex items-center gap-3">
+          <h2 className="text-base font-semibold text-[var(--text-primary)]">生成結果</h2>
+          {data.length > 0 && (
+            <span className="text-xs text-[var(--text-tertiary)]">{data.length} 筆</span>
           )}
         </div>
-      </TableCell>,
-      ...enabledFields.map((field) => (
-        <TableCell key={field.key}>
-          {renderFieldCell(row, field.key, index)}
-        </TableCell>
-      )),
-      <TableCell key="actions">
-        <Button
-          size="sm"
-          variant="flat"
-          onPress={() => copyRow(row, index)}
-        >
-          {copiedId === `row-${index}` ? "已複製 ✓" : "複製整列"}
-        </Button>
-      </TableCell>,
-    ];
-  }, [enabledFields, renderFieldCell, copyRow, copiedId]);
-
-  if (data.length === 0) {
-    return null;
-  }
-
-  return (
-    <Card className="w-full p-2">
-      <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-xl font-bold">生成結果</h2>
-        <div className="flex flex-wrap gap-2">
-          <Button
-            color="primary"
-            variant="flat"
-            size="sm"
-            className="flex-1 sm:flex-initial min-w-[100px]"
-            onPress={copyAllData}
-          >
-            {copiedId === 'all-data' ? '已複製 ✓' : '複製全部'}
-          </Button>
-          <Button
-            color="primary"
-            variant="flat"
-            size="sm"
-            className="flex-1 sm:flex-initial min-w-[100px]"
-            onPress={downloadTxt}
-          >
-            下載 TXT
-          </Button>
-          <Button
-            color="primary"
-            variant="flat"
-            size="sm"
-            className="flex-1 sm:flex-initial min-w-[100px]"
-            onPress={downloadJson}
-            isDisabled={hasEmptyJsonKey}
-          >
-            下載 JSON
-          </Button>
-        </div>
-      </CardHeader>
-      <CardBody className="overflow-x-auto">
-        {/* 行動版：卡片式佈局 */}
-        <div className="block md:hidden">
-          <div className="flex flex-col gap-3">
-            {data.map((row, index) => (
-              <div
-                key={index}
-                className="p-4 rounded-lg bg-default-50 border border-default-200"
-              >
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-1">
-                    <Chip
-                      color={row.gender === "male" ? "primary" : "secondary"}
-                      size="sm"
-                    >
-                      {row.gender === "male" ? "男" : "女"}
-                    </Chip>
-                    {row.isForeigner && (
-                      <Chip color="warning" size="sm" variant="flat">
-                        外國人
-                      </Chip>
-                    )}
-                  </div>
-                  <Button
-                    size="sm"
-                    variant="flat"
-                    className="min-h-[44px]"
-                    onPress={() => copyRow(row, index)}
-                    aria-label={`複製第 ${index + 1} 列資料`}
-                  >
-                    {copiedId === `row-${index}` ? "已複製 ✓" : "複製"}
-                  </Button>
-                </div>
-                <div className="flex flex-col gap-2">
-                  {enabledFields.map((field) => (
-                    <div key={field.key} className="flex flex-col gap-1">
-                      <span className="text-xs text-default-500">{field.label}</span>
-                      <button
-                        className={`text-left cursor-pointer hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded px-2 py-2 min-h-[44px] ${field.key === 'idNumber' || field.key === 'zipCode' || field.key === 'phone' ? 'font-mono' : ''}`}
-                        onClick={() => copyToClipboard(row[field.key], `mobile-${field.key}-${index}`)}
-                        aria-label={`複製${field.label}：${row[field.key]}`}
-                      >
-                        {row[field.key]}
-                        {copiedId === `mobile-${field.key}-${index}` && (
-                          <span className="ml-2 text-xs text-success" aria-hidden="true">✓</span>
-                        )}
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
+        {data.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            <GlassButton
+              variant="secondary"
+              size="sm"
+              onClick={copyAllData}
+              className="flex-1 sm:flex-initial min-w-[90px]"
+            >
+              {copiedId === 'all-data' ? '已複製 ✓' : '複製全部'}
+            </GlassButton>
+            <GlassButton
+              variant="secondary"
+              size="sm"
+              onClick={downloadTxt}
+              className="flex-1 sm:flex-initial min-w-[90px]"
+            >
+              下載 TXT
+            </GlassButton>
+            <GlassButton
+              variant="secondary"
+              size="sm"
+              onClick={downloadJson}
+              disabled={hasEmptyJsonKey}
+              className="flex-1 sm:flex-initial min-w-[90px]"
+            >
+              下載 JSON
+            </GlassButton>
           </div>
-        </div>
+        )}
+      </div>
 
-        {/* 平板/桌面版：表格佈局 */}
-        <div className="hidden md:block">
-          <Table
-            aria-label="生成的假資料列表"
-            aria-describedby="table-description"
-            className="min-w-full"
-            isStriped
-            removeWrapper
-          >
-            <TableHeader>
-              {columns}
-            </TableHeader>
-            <TableBody>
+      <div className="h-px bg-[var(--border-hairline)] mx-5" />
+
+      {/* 內容區域 */}
+      {data.length === 0 ? (
+        <EmptyState
+          icon="📋"
+          title="尚無資料"
+          description="設定完欄位後，點擊「生成資料」或按 ⌘↵ 開始"
+        />
+      ) : (
+        <>
+          {/* 行動版：卡片佈局 */}
+          <div className="block md:hidden px-4 py-4">
+            <div className="flex flex-col gap-3">
               {data.map((row, index) => (
-                <TableRow key={index}>
-                  {renderRow(row, index)}
-                </TableRow>
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.03, duration: 0.2 }}
+                  className={clsx(
+                    'p-4 rounded-[var(--radius-md)]',
+                    'border border-[var(--border-hairline)]',
+                    'bg-[var(--surface-glass)]',
+                  )}
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <Chip color={row.gender === 'male' ? 'blue' : 'pink'}>
+                      {row.gender === 'male' ? '男' : '女'}
+                    </Chip>
+                    <GlassButton
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => copyRow(row, index)}
+                      aria-label={`複製第 ${index + 1} 列資料`}
+                    >
+                      {copiedId === `row-${index}` ? '已複製 ✓' : '複製'}
+                    </GlassButton>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    {enabledFields.map((field) => (
+                      <div key={field.key} className="flex flex-col gap-0.5">
+                        <span className="text-[10px] uppercase tracking-wide text-[var(--text-tertiary)]">
+                          {field.label}
+                        </span>
+                        <button
+                          className={clsx(
+                            'text-left text-sm cursor-pointer',
+                            'text-[var(--text-primary)] hover:text-accent',
+                            'transition-colors duration-[var(--dur-fast)]',
+                            'focus-visible:outline-2 focus-visible:outline-accent rounded px-1',
+                            'min-h-[44px] flex items-center',
+                            (field.key === 'idNumber' || field.key === 'zipCode' || field.key === 'phone') && 'font-mono text-xs',
+                          )}
+                          onClick={() => copyToClipboard(row[field.key], `mobile-${field.key}-${index}`)}
+                          aria-label={`複製${field.label}：${row[field.key]}`}
+                        >
+                          {row[field.key]}
+                          {copiedId === `mobile-${field.key}-${index}` && (
+                            <span className="ml-1.5 text-xs text-success" aria-live="polite">✓</span>
+                          )}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
               ))}
-            </TableBody>
-          </Table>
-        </div>
-      </CardBody>
-    </Card>
+            </div>
+          </div>
+
+          {/* 桌面版：表格佈局 */}
+          <div className="hidden md:block overflow-x-auto">
+            <table
+              className="w-full text-sm"
+              aria-label="生成的假資料列表"
+            >
+              <thead>
+                <tr className="border-b border-[var(--border-hairline)]">
+                  {includeId && (
+                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-[var(--text-tertiary)] w-12">
+                      #
+                    </th>
+                  )}
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-[var(--text-tertiary)] w-16">
+                    性別
+                  </th>
+                  {enabledFields.map((field) => (
+                    <th
+                      key={field.key}
+                      className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-[var(--text-tertiary)]"
+                    >
+                      {field.label}
+                    </th>
+                  ))}
+                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-[var(--text-tertiary)] w-36">
+                    操作
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.map((row, index) => (
+                  <motion.tr
+                    key={index}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: index * 0.02, duration: 0.18 }}
+                    className={clsx(
+                      'border-b border-[var(--border-hairline)] last:border-0',
+                      'hover:bg-[var(--surface-glass)] transition-colors duration-[var(--dur-fast)]',
+                    )}
+                  >
+                    {includeId && (
+                      <td className="px-4 py-3 text-xs text-[var(--text-tertiary)] font-mono">
+                        {index + 1}
+                      </td>
+                    )}
+                    <td className="px-4 py-3">
+                      <Chip color={row.gender === 'male' ? 'blue' : 'pink'}>
+                        {row.gender === 'male' ? '男' : '女'}
+                      </Chip>
+                    </td>
+                    {enabledFields.map((field) => (
+                      <td key={field.key} className="px-4 py-3">
+                        {renderCopyableCell(row, field.key, index)}
+                      </td>
+                    ))}
+                    <td className="px-4 py-3 text-right">
+                      <GlassButton
+                        size="sm"
+                        variant={copiedId === `row-${index}` ? 'ghost' : 'secondary'}
+                        onClick={() => copyRow(row, index)}
+                      >
+                        {copiedId === `row-${index}` ? '已複製 ✓' : '複製整列'}
+                      </GlassButton>
+                    </td>
+                  </motion.tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
+    </GlassCard>
   );
 }

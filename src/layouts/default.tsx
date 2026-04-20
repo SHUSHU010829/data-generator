@@ -6,13 +6,23 @@ export default function DefaultLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="relative flex flex-col min-h-screen">
+    <div className="relative flex flex-col min-h-dvh">
       <Navbar />
-      <main className="container mx-auto max-w-7xl px-4 sm:px-6 flex-grow pt-8 sm:pt-16 pb-8">
+      <main
+        className="flex-grow mx-auto w-full max-w-screen-xl px-4 sm:px-6 pt-6 sm:pt-10 pb-8"
+        id="main-content"
+      >
         {children}
       </main>
-      <footer className="w-full flex justify-center py-4 sm:py-3 gap-1 text-xs">
-        <span>Made by shu.</span>
+      <footer
+        className="w-full py-4 flex items-center justify-center"
+        role="contentinfo"
+      >
+        <p className="text-xs text-[var(--text-tertiary)]">
+          Made by{" "}
+          <span className="text-[var(--text-secondary)] font-medium">shu.</span>
+          {" "}・ 所有資料均為隨機模擬
+        </p>
       </footer>
     </div>
   );

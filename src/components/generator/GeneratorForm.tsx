@@ -1,9 +1,5 @@
 import { memo } from "react";
-import { Card, CardBody } from "@heroui/card";
-import { Select, SelectItem } from "@heroui/select";
-import { Input } from "@heroui/input";
-import { Button } from "@heroui/button";
-import { Alert } from "@heroui/alert";
+import { GlassCard, GlassButton, GlassInput, SegmentedControl, Alert } from "@/components/ui";
 
 import type { Gender } from "@/types/generator";
 
@@ -12,6 +8,7 @@ interface GeneratorFormProps {
   count: number;
   separator: string;
   includeId: boolean;
+  enabledFieldCount: number;
   onGenderChange: (gender: Gender) => void;
   onCountChange: (count: number) => void;
   onSeparatorChange: (separator: string) => void;
@@ -19,11 +16,23 @@ interface GeneratorFormProps {
   onGenerate: () => void;
 }
 
+const genderOptions = [
+  { value: 'random' as Gender, label: '隨機' },
+  { value: 'male' as Gender, label: '男性' },
+  { value: 'female' as Gender, label: '女性' },
+];
+
+const includeIdOptions = [
+  { value: 'false', label: '不含' },
+  { value: 'true', label: '含編號' },
+];
+
 export const GeneratorForm = memo(function GeneratorForm({
   gender,
   count,
   separator,
   includeId,
+  enabledFieldCount,
   onGenderChange,
   onCountChange,
   onSeparatorChange,
@@ -31,103 +40,84 @@ export const GeneratorForm = memo(function GeneratorForm({
   onGenerate,
 }: GeneratorFormProps) {
   return (
-    <Card className="w-full p-2">
-      <CardBody>
-        <div className="flex flex-col gap-4">
-          {/* 第一排：性別、生成數量 */}
-          <div className="flex flex-col gap-4 md:flex-row">
-            <Select
+    <GlassCard padding="md">
+      <div className="flex flex-col gap-5">
+        {/* 第一排：性別、流水編號 */}
+        <div className="flex flex-col gap-4 sm:flex-row">
+          <div className="flex-1">
+            <SegmentedControl
               label="性別"
-              placeholder="選擇性別"
-              selectedKeys={[gender]}
-              className="flex-1"
-              onChange={(e) => onGenderChange(e.target.value as Gender)}
-            >
-              <SelectItem key="random">隨機</SelectItem>
-              <SelectItem key="male">男性</SelectItem>
-              <SelectItem key="female">女性</SelectItem>
-            </Select>
-
-            <Input
-              type="number"
-              label="生成數量"
-              placeholder="輸入數量 (1-100)"
-              description="最少 1 筆，最多 100 筆"
-              value={count.toString()}
-              min={1}
-              max={100}
-              className="flex-1"
-              onChange={(e) => {
-                const value = e.target.value;
-                // 允許空值以便用戶刪除
-                if (value === '') {
-                  onCountChange(1);
-                  return;
-                }
-                const num = parseInt(value);
-                // 驗證是否為有效數字
-                if (isNaN(num)) {
-                  onCountChange(1);
-                  return;
-                }
-                // 限制範圍
-                onCountChange(Math.min(100, Math.max(1, num)));
-              }}
-              onBlur={(e) => {
-                // 失焦時確保有效值
-                const num = parseInt(e.target.value);
-                if (isNaN(num) || num < 1) {
-                  onCountChange(1);
-                } else if (num > 100) {
-                  onCountChange(100);
-                }
-              }}
+              options={genderOptions}
+              value={gender}
+              onChange={onGenderChange}
+              fullWidth
             />
           </div>
-
-          {/* 第二排：分隔符號、流水編號 */}
-          <div className="flex flex-col gap-4 md:flex-row">
-            <Input
-              label="欄位分隔符號"
-              placeholder="例：空白、逗號、分號"
-              description="留空表示使用空白分隔"
-              value={separator}
-              maxLength={5}
-              className="flex-1"
-              onChange={(e) => onSeparatorChange(e.target.value)}
-            />
-
-            <Select
+          <div className="flex-1">
+            <SegmentedControl
               label="流水編號"
-              placeholder="選擇是否包含"
-              selectedKeys={[includeId ? "true" : "false"]}
-              className="flex-1"
-              onChange={(e) => onIncludeIdChange(e.target.value === "true")}
-            >
-              <SelectItem key="false">不包含</SelectItem>
-              <SelectItem key="true">包含流水編號</SelectItem>
-            </Select>
+              options={includeIdOptions}
+              value={includeId ? 'true' : 'false'}
+              onChange={(v) => onIncludeIdChange(v === 'true')}
+              fullWidth
+            />
           </div>
-
-          {/* 使用須知 */}
-          <Alert
-            color="warning"
-            variant="flat"
-            title="使用須知"
-            description="所有資料皆隨機模擬生成，並非真實數據，且僅限用於格式學習、參考以及開發測試，請不要用於非法用途且用戶不應過度信賴網站內容，本網站不負任何法律責任，特此聲明。"
-          />
-
-          {/* 生成按鈕 */}
-          <Button
-            color="primary"
-            size="lg"
-            className="w-full"
-            onPress={onGenerate}
-          >
-            生成資料
-          </Button>
         </div>
-      </CardBody>
-    </Card>
+
+        {/* 第二排：生成數量、分隔符號 */}
+        <div className="flex flex-col gap-4 sm:flex-row">
+          <GlassInput
+            label="生成數量"
+            type="number"
+            value={count.toString()}
+            min={1}
+            max={100}
+            description="最少 1 筆，最多 100 筆"
+            wrapperClassName="flex-1"
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value === '') { onCountChange(1); return; }
+              const num = parseInt(value);
+              if (isNaN(num)) { onCountChange(1); return; }
+              onCountChange(Math.min(100, Math.max(1, num)));
+            }}
+            onBlur={(e) => {
+              const num = parseInt(e.target.value);
+              if (isNaN(num) || num < 1) onCountChange(1);
+              else if (num > 100) onCountChange(100);
+            }}
+          />
+          <GlassInput
+            label="欄位分隔符號"
+            value={separator}
+            maxLength={5}
+            description="留空表示使用空白分隔"
+            wrapperClassName="flex-1"
+            onChange={(e) => onSeparatorChange(e.target.value)}
+          />
+        </div>
+
+        {/* 使用須知 */}
+        <Alert
+          variant="warning"
+          title="使用須知"
+          description="所有資料皆隨機模擬生成，並非真實數據，且僅限用於格式學習、參考以及開發測試，請不要用於非法用途且用戶不應過度信賴網站內容，本網站不負任何法律責任，特此聲明。"
+        />
+
+        {/* 生成按鈕 */}
+        <GlassButton
+          variant="primary"
+          size="lg"
+          fullWidth
+          onClick={onGenerate}
+          aria-label={`生成 ${count} 筆資料，包含 ${enabledFieldCount} 個欄位`}
+        >
+          <span>生成資料</span>
+          <span className="opacity-70 text-xs font-normal">
+            {count} 筆 · {enabledFieldCount} 個欄位
+          </span>
+        </GlassButton>
+      </div>
+    </GlassCard>
   );
 });
