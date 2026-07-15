@@ -62,15 +62,38 @@ export function generateSingleData(config: GeneratorConfig): FakeData {
 }
 
 /**
+ * 取得單筆資料的唯一性鍵（身分證、手機、email 三個常作為主鍵的欄位）
+ */
+function uniqueKeysOf(data: FakeData): string[] {
+  return [`id:${data.idNumber}`, `phone:${data.phone}`, `email:${data.email}`];
+}
+
+/**
  * 生成多筆假資料
+ *
+ * 對身分證、手機、email 做去重，避免大量產生時碰撞（這些欄位常被當成
+ * 資料庫主鍵）。姓名等欄位不強制唯一，因真實世界本就會重複。
+ *
  * @param config - 生成器設定
  * @returns 假資料陣列
  */
 export function generateMultipleData(config: GeneratorConfig): FakeData[] {
   const results: FakeData[] = [];
+  const seen = new Set<string>();
+  const MAX_RETRY = 50; // 重試上限，避免極端情況（資料池耗盡）無限迴圈
 
   for (let i = 0; i < config.count; i++) {
-    results.push(generateSingleData(config));
+    let data = generateSingleData(config);
+
+    // 任一關鍵欄位已出現過就重新生成，直到唯一或達重試上限
+    let retry = 0;
+    while (retry < MAX_RETRY && uniqueKeysOf(data).some((key) => seen.has(key))) {
+      data = generateSingleData(config);
+      retry++;
+    }
+
+    uniqueKeysOf(data).forEach((key) => seen.add(key));
+    results.push(data);
   }
 
   return results;
