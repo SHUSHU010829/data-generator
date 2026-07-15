@@ -1,12 +1,12 @@
 /**
- * 台灣常見的電子郵件服務商網域
+ * RFC 2606 保留網域
+ * 這些網域由 IANA 保留給文件與測試用途，永遠不會路由到真實信箱，
+ * 可避免測試信誤寄給真人或造成退信被郵件系統攔截。
  */
 const EMAIL_DOMAINS = [
-  'gmail.com',
-  'yahoo.com.tw',
-  'hotmail.com',
-  'outlook.com',
-  'icloud.com',
+  'example.com',
+  'example.net',
+  'example.org',
 ] as const;
 
 /**
