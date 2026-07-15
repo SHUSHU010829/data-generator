@@ -1,6 +1,7 @@
 import { forwardRef } from 'react';
 import { motion, HTMLMotionProps } from 'framer-motion';
 import clsx from 'clsx';
+import { Loader2 } from 'lucide-react';
 
 interface GlassButtonProps extends Omit<HTMLMotionProps<'button'>, 'children'> {
   children?: React.ReactNode;
@@ -15,22 +16,21 @@ interface GlassButtonProps extends Omit<HTMLMotionProps<'button'>, 'children'> {
 const variantStyles = {
   primary: [
     'bg-accent text-white',
-    'shadow-[var(--shadow-accent)]',
-    'border border-white/20',
+    'border border-transparent',
     'hover:brightness-110',
   ],
   secondary: [
     'glass text-[var(--text-primary)]',
-    'hover:bg-[var(--surface-glass-strong)]',
+    'hover:bg-[var(--surface-elevated)]',
   ],
   ghost: [
     'bg-transparent text-[var(--text-secondary)]',
     'border border-transparent',
-    'hover:bg-[var(--surface-glass)] hover:text-[var(--text-primary)]',
+    'hover:bg-[var(--surface-elevated)] hover:text-[var(--text-primary)]',
   ],
   destructive: [
     'bg-danger text-white',
-    'border border-white/20',
+    'border border-transparent',
     'hover:brightness-110',
   ],
 };
@@ -80,17 +80,7 @@ export const GlassButton = forwardRef<HTMLButtonElement, GlassButtonProps>(
         {...rest}
       >
         {loading ? (
-          <svg
-            className="animate-spin"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            aria-hidden="true"
-          >
-            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeOpacity="0.25" />
-            <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-          </svg>
+          <Loader2 size={16} strokeWidth={2.5} className="animate-spin" aria-hidden="true" />
         ) : (
           <>
             {iconLeft && <span aria-hidden="true">{iconLeft}</span>}

@@ -1,15 +1,14 @@
-import { motion } from 'framer-motion';
 import clsx from 'clsx';
 
 interface EmptyStateProps {
-  icon?: string;
+  icon?: React.ReactNode;
   title: string;
   description?: string;
   action?: React.ReactNode;
   className?: string;
 }
 
-export function EmptyState({ icon = '📊', title, description, action, className }: EmptyStateProps) {
+export function EmptyState({ icon, title, description, action, className }: EmptyStateProps) {
   return (
     <div
       className={clsx(
@@ -17,15 +16,15 @@ export function EmptyState({ icon = '📊', title, description, action, classNam
         className,
       )}
     >
-      {/* 浮動圖示 */}
-      <motion.div
-        animate={{ y: [0, -6, 0] }}
-        transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-        className="text-5xl mb-5 select-none"
-        aria-hidden="true"
-      >
-        {icon}
-      </motion.div>
+      {/* 圖示 */}
+      {icon && (
+        <div
+          className="flex items-center justify-center w-12 h-12 mb-5 rounded-[var(--radius-lg)] bg-[var(--surface-elevated)] border border-[var(--border-hairline)] text-[var(--text-tertiary)]"
+          aria-hidden="true"
+        >
+          {icon}
+        </div>
+      )}
 
       {/* 標題 */}
       <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">

@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import { TriangleAlert, Info, CircleCheck, CircleX, type LucideIcon } from 'lucide-react';
 
 interface AlertProps {
   variant?: 'warning' | 'info' | 'success' | 'error';
@@ -7,49 +8,30 @@ interface AlertProps {
   className?: string;
 }
 
-const variantConfig = {
+const variantConfig: Record<
+  NonNullable<AlertProps['variant']>,
+  { icon: LucideIcon; color: string; bg: string; border: string }
+> = {
   warning: {
-    icon: (
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-        <path d="M8 1.5L14.5 13.5H1.5L8 1.5Z" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round"/>
-        <path d="M8 6V9" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round"/>
-        <circle cx="8" cy="11.5" r="0.75" fill="currentColor"/>
-      </svg>
-    ),
+    icon: TriangleAlert,
     color: 'text-warning',
     bg: 'bg-warning/8',
     border: 'border-warning/20',
   },
   info: {
-    icon: (
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-        <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.25"/>
-        <path d="M8 7V12" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round"/>
-        <circle cx="8" cy="4.5" r="0.75" fill="currentColor"/>
-      </svg>
-    ),
+    icon: Info,
     color: 'text-accent',
     bg: 'bg-accent/8',
     border: 'border-accent/20',
   },
   success: {
-    icon: (
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-        <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.25"/>
-        <path d="M5 8L7 10L11 6" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round"/>
-      </svg>
-    ),
+    icon: CircleCheck,
     color: 'text-success',
     bg: 'bg-success/8',
     border: 'border-success/20',
   },
   error: {
-    icon: (
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-        <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.25"/>
-        <path d="M5.5 5.5L10.5 10.5M10.5 5.5L5.5 10.5" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round"/>
-      </svg>
-    ),
+    icon: CircleX,
     color: 'text-danger',
     bg: 'bg-danger/8',
     border: 'border-danger/20',
@@ -58,6 +40,7 @@ const variantConfig = {
 
 export function Alert({ variant = 'info', title, description, className }: AlertProps) {
   const config = variantConfig[variant];
+  const Icon = config.icon;
 
   return (
     <div
@@ -70,7 +53,9 @@ export function Alert({ variant = 'info', title, description, className }: Alert
         className,
       )}
     >
-      <span className={clsx('flex-shrink-0 mt-0.5', config.color)}>{config.icon}</span>
+      <span className={clsx('flex-shrink-0 mt-0.5', config.color)}>
+        <Icon size={16} strokeWidth={2} aria-hidden="true" />
+      </span>
       <div>
         {title && (
           <p className={clsx('text-sm font-semibold mb-0.5', config.color)}>{title}</p>

@@ -1,6 +1,7 @@
 import { useState, useCallback, useMemo } from "react";
 import { motion } from "framer-motion";
 import clsx from "clsx";
+import { Copy, Check, Inbox } from "lucide-react";
 import { GlassCard, GlassButton, Chip, Tooltip, EmptyState } from "@/components/ui";
 import { useToast } from "@/hooks/useToast";
 
@@ -129,7 +130,9 @@ export function DataTable({ data, separator, fields, includeId }: DataTableProps
         >
           {value}
           {isCopied && (
-            <span className="ml-1.5 text-xs text-success" aria-live="polite">✓</span>
+            <span className="ml-1.5 inline-flex align-middle text-success" aria-live="polite">
+              <Check size={13} strokeWidth={3} aria-hidden="true" />
+            </span>
           )}
         </button>
       </Tooltip>
@@ -152,9 +155,12 @@ export function DataTable({ data, separator, fields, includeId }: DataTableProps
               variant="secondary"
               size="sm"
               onClick={copyAllData}
+              iconLeft={copiedId === 'all-data'
+                ? <Check size={14} strokeWidth={2.5} className="text-success" />
+                : <Copy size={14} strokeWidth={2} />}
               className="flex-1 sm:flex-initial min-w-[90px]"
             >
-              {copiedId === 'all-data' ? '已複製 ✓' : '複製全部'}
+              {copiedId === 'all-data' ? '已複製' : '複製全部'}
             </GlassButton>
             <GlassButton
               variant="secondary"
@@ -182,7 +188,7 @@ export function DataTable({ data, separator, fields, includeId }: DataTableProps
       {/* 內容區域 */}
       {data.length === 0 ? (
         <EmptyState
-          icon="📋"
+          icon={<Inbox size={22} strokeWidth={2} />}
           title="尚無資料"
           description="設定完欄位後，點擊「生成資料」或按 ⌘↵ 開始"
         />
@@ -200,7 +206,7 @@ export function DataTable({ data, separator, fields, includeId }: DataTableProps
                   className={clsx(
                     'p-4 rounded-[var(--radius-md)]',
                     'border border-[var(--border-hairline)]',
-                    'bg-[var(--surface-glass)]',
+                    'bg-[var(--surface-elevated)]',
                   )}
                 >
                   <div className="flex items-center justify-between mb-3">
@@ -211,9 +217,12 @@ export function DataTable({ data, separator, fields, includeId }: DataTableProps
                       size="sm"
                       variant="ghost"
                       onClick={() => copyRow(row, index)}
+                      iconLeft={copiedId === `row-${index}`
+                        ? <Check size={14} strokeWidth={2.5} className="text-success" />
+                        : <Copy size={14} strokeWidth={2} />}
                       aria-label={`複製第 ${index + 1} 列資料`}
                     >
-                      {copiedId === `row-${index}` ? '已複製 ✓' : '複製'}
+                      {copiedId === `row-${index}` ? '已複製' : '複製'}
                     </GlassButton>
                   </div>
                   <div className="flex flex-col gap-2">
@@ -236,7 +245,9 @@ export function DataTable({ data, separator, fields, includeId }: DataTableProps
                         >
                           {row[field.key]}
                           {copiedId === `mobile-${field.key}-${index}` && (
-                            <span className="ml-1.5 text-xs text-success" aria-live="polite">✓</span>
+                            <span className="ml-1.5 inline-flex align-middle text-success" aria-live="polite">
+                              <Check size={13} strokeWidth={3} aria-hidden="true" />
+                            </span>
                           )}
                         </button>
                       </div>
@@ -285,7 +296,7 @@ export function DataTable({ data, separator, fields, includeId }: DataTableProps
                     transition={{ delay: index * 0.02, duration: 0.18 }}
                     className={clsx(
                       'border-b border-[var(--border-hairline)] last:border-0',
-                      'hover:bg-[var(--surface-glass)] transition-colors duration-[var(--dur-fast)]',
+                      'hover:bg-[var(--surface-elevated)] transition-colors duration-[var(--dur-fast)]',
                     )}
                   >
                     {includeId && (
@@ -308,8 +319,11 @@ export function DataTable({ data, separator, fields, includeId }: DataTableProps
                         size="sm"
                         variant={copiedId === `row-${index}` ? 'ghost' : 'secondary'}
                         onClick={() => copyRow(row, index)}
+                        iconLeft={copiedId === `row-${index}`
+                          ? <Check size={14} strokeWidth={2.5} className="text-success" />
+                          : <Copy size={14} strokeWidth={2} />}
                       >
-                        {copiedId === `row-${index}` ? '已複製 ✓' : '複製整列'}
+                        {copiedId === `row-${index}` ? '已複製' : '複製整列'}
                       </GlassButton>
                     </td>
                   </motion.tr>

@@ -12,40 +12,33 @@
 
 @layer base {
   :root {
-    --bg-base: #F5F6FA;
-    --aurora-1: #BDD8FF;
-    --aurora-2: #E0CCFF;
-    --aurora-3: #C6F2E2;
+    /* 中性灰階 + 藍色強調（Linear 風扁平配色） */
+    --bg-base: #FAFAFA;
 
-    --surface-glass: rgba(255, 255, 255, 0.55);
-    --surface-glass-strong: rgba(255, 255, 255, 0.78);
-    --surface-interactive: rgba(255, 255, 255, 0.7);
-    --surface-elevated: rgba(255, 255, 255, 0.85);
+    /* 表面：純色扁平，靠細髮絲邊框區隔層級（不再使用毛玻璃透明疊層） */
+    --surface-glass: #FFFFFF;
+    --surface-glass-strong: #FFFFFF;
+    --surface-interactive: #FFFFFF;
+    --surface-elevated: #F4F4F5;
 
-    --border-glass: rgba(255, 255, 255, 0.48);
-    --border-glass-inner: rgba(255, 255, 255, 0.6);
-    --border-hairline: rgba(15, 17, 21, 0.08);
+    --border-glass: rgba(9, 9, 11, 0.09);
+    --border-glass-inner: rgba(9, 9, 11, 0.06);
+    --border-hairline: rgba(9, 9, 11, 0.07);
 
-    --text-primary: #0B0B0F;
-    --text-secondary: #3C3C43;
-    --text-tertiary: #8A8A8F;
-    --text-quaternary: #C7C7CC;
+    --text-primary: #18181B;
+    --text-secondary: #52525B;
+    --text-tertiary: #A1A1AA;
+    --text-quaternary: #D4D4D8;
     --text-on-accent: #FFFFFF;
 
-    --shadow-glass: 0 1px 1px rgba(255, 255, 255, 0.5) inset,
-      0 8px 24px rgba(15, 17, 21, 0.07),
-      0 1px 2px rgba(15, 17, 21, 0.04);
-    --shadow-elevated: 0 20px 48px rgba(15, 17, 21, 0.12),
-      0 2px 6px rgba(15, 17, 21, 0.06);
-    --shadow-accent: 0 4px 16px rgba(10, 132, 255, 0.3);
+    /* 扁平化：一般表面不用陰影，僅浮層（Dialog/Toast/Tooltip）保留極淡陰影 */
+    --shadow-elevated: 0 8px 24px rgba(9, 9, 11, 0.08),
+      0 2px 6px rgba(9, 9, 11, 0.04);
 
-    --blur-glass: 24px;
-    --blur-glass-strong: 40px;
-
-    --radius-sm: 10px;
-    --radius-md: 14px;
-    --radius-lg: 20px;
-    --radius-xl: 28px;
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
     --radius-pill: 9999px;
 
     --ease-ios: cubic-bezier(0.32, 0.72, 0, 1);
@@ -58,31 +51,24 @@
   }
 
   .dark {
-    --bg-base: #0A0A0F;
-    --aurora-1: rgba(189, 216, 255, 0.22);
-    --aurora-2: rgba(224, 204, 255, 0.18);
-    --aurora-3: rgba(198, 242, 226, 0.15);
+    --bg-base: #0B0B0D;
 
-    --surface-glass: rgba(28, 28, 30, 0.6);
-    --surface-glass-strong: rgba(44, 44, 46, 0.78);
-    --surface-interactive: rgba(50, 50, 52, 0.7);
-    --surface-elevated: rgba(58, 58, 60, 0.85);
+    --surface-glass: #161618;
+    --surface-glass-strong: #1C1C1F;
+    --surface-interactive: #1C1C1F;
+    --surface-elevated: #26262A;
 
-    --border-glass: rgba(255, 255, 255, 0.10);
-    --border-glass-inner: rgba(255, 255, 255, 0.07);
+    --border-glass: rgba(255, 255, 255, 0.09);
+    --border-glass-inner: rgba(255, 255, 255, 0.05);
     --border-hairline: rgba(255, 255, 255, 0.07);
 
-    --text-primary: #F2F2F7;
-    --text-secondary: #C7C7CC;
-    --text-tertiary: #8E8E93;
-    --text-quaternary: #48484A;
+    --text-primary: #FAFAFA;
+    --text-secondary: #A1A1AA;
+    --text-tertiary: #71717A;
+    --text-quaternary: #3F3F46;
 
-    --shadow-glass: 0 1px 1px rgba(255, 255, 255, 0.04) inset,
-      0 8px 24px rgba(0, 0, 0, 0.28),
-      0 1px 2px rgba(0, 0, 0, 0.18);
-    --shadow-elevated: 0 20px 48px rgba(0, 0, 0, 0.4),
-      0 2px 6px rgba(0, 0, 0, 0.28);
-    --shadow-accent: 0 4px 16px rgba(10, 132, 255, 0.4);
+    --shadow-elevated: 0 8px 24px rgba(0, 0, 0, 0.45),
+      0 2px 6px rgba(0, 0, 0, 0.3);
   }
 
   html {
@@ -102,48 +88,6 @@
       color var(--dur-base) var(--ease-ios);
   }
 
-  /* Aurora 光斑裝飾（背景層） */
-  body::before,
-  body::after {
-    content: '';
-    position: fixed;
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: -1;
-  }
-
-  body::before {
-    top: -25%;
-    left: -15%;
-    width: 65%;
-    height: 70%;
-    background: radial-gradient(circle, var(--aurora-1) 0%, transparent 68%);
-    filter: blur(70px);
-    animation: auroraDrift1 32s ease-in-out infinite alternate;
-  }
-
-  body::after {
-    bottom: -25%;
-    right: -15%;
-    width: 60%;
-    height: 65%;
-    background: radial-gradient(circle, var(--aurora-2) 0%, transparent 68%);
-    filter: blur(70px);
-    animation: auroraDrift2 26s ease-in-out infinite alternate;
-  }
-
-  @keyframes auroraDrift1 {
-    0% { transform: translate(0, 0) scale(1); }
-    50% { transform: translate(3%, 4%) scale(1.05); }
-    100% { transform: translate(6%, 8%) scale(1.1); }
-  }
-
-  @keyframes auroraDrift2 {
-    0% { transform: translate(0, 0) scale(1); }
-    50% { transform: translate(-4%, -3%) scale(1.04); }
-    100% { transform: translate(-8%, -6%) scale(1.08); }
-  }
-
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -157,53 +101,33 @@
 }
 
 @layer components {
-  /* 毛玻璃基礎層 */
+  /* 扁平表面基礎層：純色 + 髮絲邊框，無模糊、無陰影 */
   .glass {
     background: var(--surface-glass);
-    backdrop-filter: blur(var(--blur-glass));
-    -webkit-backdrop-filter: blur(var(--blur-glass));
     border: 1px solid var(--border-glass);
-    box-shadow: var(--shadow-glass);
   }
 
+  /* 浮層（Dialog / Toast / Tooltip）：保留極淡陰影以浮起 */
   .glass-strong {
     background: var(--surface-glass-strong);
-    backdrop-filter: blur(var(--blur-glass-strong));
-    -webkit-backdrop-filter: blur(var(--blur-glass-strong));
     border: 1px solid var(--border-glass);
-    box-shadow: var(--shadow-glass);
+    box-shadow: var(--shadow-elevated);
   }
 
   .glass-interactive {
     background: var(--surface-interactive);
-    backdrop-filter: blur(var(--blur-glass));
-    -webkit-backdrop-filter: blur(var(--blur-glass));
     border: 1px solid var(--border-glass);
-    box-shadow: var(--shadow-glass);
     transition: background var(--dur-fast) var(--ease-ios),
       border-color var(--dur-fast) var(--ease-ios),
-      box-shadow var(--dur-fast) var(--ease-ios),
       transform var(--dur-fast) var(--ease-ios);
   }
 
   .glass-interactive:hover {
     background: var(--surface-elevated);
-    box-shadow: var(--shadow-elevated);
   }
 
   .glass-interactive:active {
     transform: scale(0.97);
-  }
-
-  /* Fallback for browsers without backdrop-filter */
-  @supports not (backdrop-filter: blur(1px)) {
-    .glass,
-    .glass-strong,
-    .glass-interactive {
-      background: var(--surface-glass-strong);
-      backdrop-filter: none;
-      -webkit-backdrop-filter: none;
-    }
   }
 
   /* 無障礙隱藏 */

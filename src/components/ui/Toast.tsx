@@ -2,17 +2,22 @@ import { useState, useCallback, useRef, useEffect, ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import clsx from 'clsx';
+import { Check, X, TriangleAlert, Info, type LucideIcon } from 'lucide-react';
 import { ToastContext, ToastItem, ToastOptions } from '@/hooks/useToast';
 
-const variantConfig = {
-  success: { icon: '✓', color: 'text-success', bg: 'bg-success/10' },
-  error: { icon: '✕', color: 'text-danger', bg: 'bg-danger/10' },
-  warning: { icon: '!', color: 'text-warning', bg: 'bg-warning/10' },
-  info: { icon: 'i', color: 'text-accent', bg: 'bg-accent/10' },
+const variantConfig: Record<
+  ToastItem['variant'],
+  { icon: LucideIcon; color: string; bg: string }
+> = {
+  success: { icon: Check, color: 'text-success', bg: 'bg-success/10' },
+  error: { icon: X, color: 'text-danger', bg: 'bg-danger/10' },
+  warning: { icon: TriangleAlert, color: 'text-warning', bg: 'bg-warning/10' },
+  info: { icon: Info, color: 'text-accent', bg: 'bg-accent/10' },
 };
 
 function ToastCard({ item, onDismiss }: { item: ToastItem; onDismiss: () => void }) {
   const config = variantConfig[item.variant];
+  const Icon = config.icon;
 
   return (
     <motion.div
@@ -33,13 +38,13 @@ function ToastCard({ item, onDismiss }: { item: ToastItem; onDismiss: () => void
     >
       <span
         className={clsx(
-          'flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold',
+          'flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center',
           config.bg,
           config.color,
         )}
         aria-hidden="true"
       >
-        {config.icon}
+        <Icon size={14} strokeWidth={2.5} />
       </span>
 
       <div className="flex-1 min-w-0">
@@ -56,9 +61,7 @@ function ToastCard({ item, onDismiss }: { item: ToastItem; onDismiss: () => void
         className="flex-shrink-0 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors"
         aria-label="關閉通知"
       >
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-          <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        </svg>
+        <X size={14} strokeWidth={2} aria-hidden="true" />
       </button>
     </motion.div>
   );

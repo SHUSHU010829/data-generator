@@ -19,7 +19,7 @@ export function KbdHint({ keys, className }: KbdHintProps) {
             'min-w-[20px] h-5 px-1',
             'text-[10px] font-medium text-[var(--text-tertiary)]',
             'rounded border border-[var(--border-hairline)]',
-            'bg-[var(--surface-glass)]',
+            'bg-[var(--surface-elevated)]',
           )}
         >
           {key}

@@ -37,7 +37,7 @@ export function GlassSwitch({ checked, onChange, label, size = 'sm', disabled = 
       />
 
       <motion.div
-        animate={{ backgroundColor: checked ? '#30D158' : 'var(--border-hairline)' }}
+        animate={{ backgroundColor: checked ? '#30D158' : 'var(--text-quaternary)' }}
         transition={{ duration: 0.18, ease: [0.32, 0.72, 0, 1] }}
         className={clsx(
           'relative flex-shrink-0 rounded-full',
@@ -52,7 +52,7 @@ export function GlassSwitch({ checked, onChange, label, size = 'sm', disabled = 
           transition={{ type: 'spring', stiffness: 500, damping: 35, mass: 0.8 }}
           className={clsx(
             'absolute top-[3px] rounded-full bg-white',
-            'shadow-[0_1px_4px_rgba(0,0,0,0.25),0_1px_1px_rgba(0,0,0,0.12)]',
+            'shadow-[0_1px_2px_rgba(0,0,0,0.15)]',
             knobSize,
           )}
         />
