@@ -1,4 +1,5 @@
 import type { YearFormat } from '../../types/generator';
+import { random } from '../random';
 
 /**
  * 生成隨機生日
@@ -16,14 +17,14 @@ export function generateBirthday(yearFormat: YearFormat = 'western'): string {
   const maxYear = currentYear - minAge;
 
   // 隨機生成年份
-  const year = Math.floor(Math.random() * (maxYear - minYear + 1)) + minYear;
+  const year = Math.floor(random() * (maxYear - minYear + 1)) + minYear;
 
   // 隨機生成月份 (1-12)
-  const month = Math.floor(Math.random() * 12) + 1;
+  const month = Math.floor(random() * 12) + 1;
 
   // 根據月份決定天數
   const daysInMonth = new Date(year, month, 0).getDate();
-  const day = Math.floor(Math.random() * daysInMonth) + 1;
+  const day = Math.floor(random() * daysInMonth) + 1;
 
   // 格式化月份和日期（補零）
   const monthStr = month.toString().padStart(2, '0');

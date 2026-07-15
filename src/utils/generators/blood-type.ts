@@ -1,3 +1,5 @@
+import { random } from '../random';
+
 /**
  * 台灣血型分布權重（依台灣捐血中心概略統計）
  * O 44% / A 26% / B 24% / AB 6%
@@ -17,11 +19,11 @@ const TOTAL_WEIGHT = BLOOD_TYPE_WEIGHTS.reduce((sum, item) => sum + item.weight,
  * @returns 血型字串（A、B、O、AB）
  */
 export function generateBloodType(): string {
-  let random = Math.random() * TOTAL_WEIGHT;
+  let roll = random() * TOTAL_WEIGHT;
 
   for (const { type, weight } of BLOOD_TYPE_WEIGHTS) {
-    if (random < weight) return type;
-    random -= weight;
+    if (roll < weight) return type;
+    roll -= weight;
   }
 
   // 浮點誤差保底，理論上不會執行到

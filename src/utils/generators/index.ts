@@ -1,6 +1,7 @@
 // 生成器統一匯出
 
 import type { FakeData, GeneratorConfig } from '../../types/generator';
+import { random, setSeed } from '../random';
 import { generateTaiwanId } from './taiwan-id';
 import { generateResidentCert } from './resident-cert';
 import { generateTaiwanName, generateEnglishName } from './name';
@@ -19,7 +20,7 @@ export function generateSingleData(config: GeneratorConfig): FakeData {
   // 決定實際性別
   const actualGender: 'male' | 'female' =
     config.gender === 'random'
-      ? (Math.random() < 0.5 ? 'male' : 'female')
+      ? (random() < 0.5 ? 'male' : 'female')
       : config.gender;
 
   const { zipCode, address } = generateAddress();
@@ -31,14 +32,14 @@ export function generateSingleData(config: GeneratorConfig): FakeData {
   let actualIdType = config.idType;
   if (config.idType === 'random') {
     // 隨機時：90% 身分證，10% 居留證
-    actualIdType = Math.random() < 0.9 ? 'nationalId' : 'residentCert';
+    actualIdType = random() < 0.9 ? 'nationalId' : 'residentCert';
   }
 
   if (actualIdType === 'nationalId') {
     idNumber = generateTaiwanId(actualGender);
   } else {
     // 居留證：隨機選擇新版或舊版
-    const certType = Math.random() < 0.5 ? 'new' : 'old';
+    const certType = random() < 0.5 ? 'new' : 'old';
     idNumber = generateResidentCert(actualGender, certType);
   }
 
@@ -78,6 +79,9 @@ function uniqueKeysOf(data: FakeData): string[] {
  * @returns 假資料陣列
  */
 export function generateMultipleData(config: GeneratorConfig): FakeData[] {
+  // 設定亂數種子：有種子則本批可重現，留空則每次隨機
+  setSeed(config.seed);
+
   const results: FakeData[] = [];
   const seen = new Set<string>();
   const MAX_RETRY = 50; // 重試上限，避免極端情況（資料池耗盡）無限迴圈

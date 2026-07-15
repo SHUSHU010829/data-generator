@@ -2,12 +2,13 @@
 
 import { surnames, maleGivenNames, femaleGivenNames } from '../../data/taiwan-names';
 import { charToRomanization } from '../../data/name-romanization';
+import { random } from '../random';
 
 /**
  * 從陣列中隨機選擇一個元素
  */
 function randomChoice<T>(array: T[]): T {
-  return array[Math.floor(Math.random() * array.length)];
+  return array[Math.floor(random() * array.length)];
 }
 
 /**

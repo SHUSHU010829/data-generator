@@ -2,6 +2,7 @@
 
 import type { ResidentCertType } from '../../types/generator';
 import { cityCodeMap, cityCodes, oldResidentCertSecondLetterMap } from '../../data/id-mappings';
+import { random } from '../random';
 
 /**
  * 計算舊版居留證檢查碼
@@ -58,18 +59,18 @@ export function generateResidentCert(
   gender: 'male' | 'female',
   type: ResidentCertType
 ): string {
-  const cityCode = cityCodes[Math.floor(Math.random() * cityCodes.length)];
+  const cityCode = cityCodes[Math.floor(random() * cityCodes.length)];
 
   if (type === 'old') {
     // 舊版：第二碼為 A/C (男) 或 B/D (女)
     const secondLetter = gender === 'male'
-      ? (Math.random() < 0.5 ? 'A' : 'C')
-      : (Math.random() < 0.5 ? 'B' : 'D');
+      ? (random() < 0.5 ? 'A' : 'C')
+      : (random() < 0.5 ? 'B' : 'D');
 
     // 生成 7 個隨機數字
     let randomDigits = '';
     for (let i = 0; i < 7; i++) {
-      randomDigits += Math.floor(Math.random() * 10);
+      randomDigits += Math.floor(random() * 10);
     }
 
     const certPrefix = cityCode + secondLetter + randomDigits;
@@ -83,7 +84,7 @@ export function generateResidentCert(
     // 生成 7 個隨機數字
     let randomDigits = '';
     for (let i = 0; i < 7; i++) {
-      randomDigits += Math.floor(Math.random() * 10);
+      randomDigits += Math.floor(random() * 10);
     }
 
     const certPrefix = cityCode + genderCode + randomDigits;

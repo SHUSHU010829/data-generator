@@ -24,6 +24,7 @@ export default function IndexPage() {
   const [count, setCount] = useState<number>(10);
   const [separator, setSeparator] = useState<string>(" ");
   const [includeId, setIncludeId] = useState<boolean>(false);
+  const [seed, setSeed] = useState<string>("");
   const [fields, setFields] = useState<FieldConfig[]>([
     { key: 'taiwanName', label: '中文姓名', enabled: true, jsonKey: 'name' },
     { key: 'englishName', label: '英文姓名', enabled: false, jsonKey: 'englishName' },
@@ -47,6 +48,7 @@ export default function IndexPage() {
       count,
       separator,
       yearFormat: birthdayField?.options?.yearFormat || 'western',
+      seed: seed || undefined,
     });
     setData(generatedData);
   };
@@ -63,11 +65,13 @@ export default function IndexPage() {
             count={count}
             separator={separator}
             includeId={includeId}
+            seed={seed}
             enabledFieldCount={enabledFieldCount}
             onGenderChange={setGender}
             onCountChange={setCount}
             onSeparatorChange={setSeparator}
             onIncludeIdChange={setIncludeId}
+            onSeedChange={setSeed}
             onGenerate={handleGenerate}
           />
         </motion.div>

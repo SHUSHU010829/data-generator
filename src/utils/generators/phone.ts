@@ -1,5 +1,7 @@
 // 手機號碼生成器
 
+import { random } from '../random';
+
 // 台灣電信業者前綴（09XX）
 const carriers = [
   '0910', '0911', '0912', '0913', '0916', '0917', '0918', '0919', // 中華電信
@@ -13,7 +15,7 @@ const carriers = [
  * 從陣列中隨機選擇一個元素
  */
 function randomChoice<T>(array: T[]): T {
-  return array[Math.floor(Math.random() * array.length)];
+  return array[Math.floor(random() * array.length)];
 }
 
 /**
@@ -26,7 +28,7 @@ export function generatePhone(): string {
   // 生成後 6 碼
   let suffix = '';
   for (let i = 0; i < 6; i++) {
-    suffix += Math.floor(Math.random() * 10);
+    suffix += Math.floor(random() * 10);
   }
 
   // 返回 10 位數字（不含分隔符號）
