@@ -36,11 +36,13 @@ export function GlassSwitch({ checked, onChange, label, size = 'sm', disabled = 
         className="sr-only"
       />
 
+      {/* 自訂開關：關閉時為描邊軌道，開啟時填入強調色（非原生 iOS 綠色樣式） */}
       <motion.div
-        animate={{ backgroundColor: checked ? '#30D158' : 'var(--border-hairline)' }}
+        animate={{ backgroundColor: checked ? 'var(--color-accent)' : 'var(--surface-elevated)' }}
         transition={{ duration: 0.18, ease: [0.32, 0.72, 0, 1] }}
         className={clsx(
           'relative flex-shrink-0 rounded-full',
+          'shadow-[inset_0_0_0_1px_var(--border-glass)]',
           'focus-within:ring-2 focus-within:ring-accent focus-within:ring-offset-1',
           size === 'sm' ? 'w-9 h-5' : 'w-11 h-6',
         )}
@@ -48,11 +50,14 @@ export function GlassSwitch({ checked, onChange, label, size = 'sm', disabled = 
         aria-hidden="true"
       >
         <motion.div
-          animate={{ x: checked ? offset : 2 }}
+          animate={{
+            x: checked ? offset : 2,
+            backgroundColor: checked ? '#FFFFFF' : 'var(--text-tertiary)',
+          }}
           transition={{ type: 'spring', stiffness: 500, damping: 35, mass: 0.8 }}
           className={clsx(
-            'absolute top-[3px] rounded-full bg-white',
-            'shadow-[0_1px_4px_rgba(0,0,0,0.25),0_1px_1px_rgba(0,0,0,0.12)]',
+            'absolute top-[3px] rounded-full',
+            checked && 'shadow-[0_1px_2px_rgba(0,0,0,0.2)]',
             knobSize,
           )}
         />

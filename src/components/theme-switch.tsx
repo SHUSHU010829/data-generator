@@ -1,8 +1,8 @@
 import { FC } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import clsx from "clsx";
+import { Moon, Sun } from "lucide-react";
 import { useTheme } from "@/hooks/useTheme";
-import { MoonFilledIcon, SunFilledIcon } from "@/components/icons";
 
 interface ThemeSwitchProps {
   className?: string;
@@ -37,7 +37,7 @@ export const ThemeSwitch: FC<ThemeSwitchProps> = ({ className }) => {
             className="flex"
             aria-hidden="true"
           >
-            <MoonFilledIcon size={18} />
+            <Moon size={18} strokeWidth={2} />
           </motion.span>
         ) : (
           <motion.span
@@ -49,7 +49,7 @@ export const ThemeSwitch: FC<ThemeSwitchProps> = ({ className }) => {
             className="flex"
             aria-hidden="true"
           >
-            <SunFilledIcon size={18} />
+            <Sun size={18} strokeWidth={2} />
           </motion.span>
         )}
       </AnimatePresence>

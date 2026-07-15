@@ -40,40 +40,31 @@ export const GeneratorForm = memo(function GeneratorForm({
   onGenerate,
 }: GeneratorFormProps) {
   return (
-    <GlassCard padding="md">
-      <div className="flex flex-col gap-5">
-        {/* 第一排：性別、流水編號 */}
-        <div className="flex flex-col gap-4 sm:flex-row">
-          <div className="flex-1">
-            <SegmentedControl
-              label="性別"
-              options={genderOptions}
-              value={gender}
-              onChange={onGenderChange}
-              fullWidth
-            />
-          </div>
-          <div className="flex-1">
-            <SegmentedControl
-              label="流水編號"
-              options={includeIdOptions}
-              value={includeId ? 'true' : 'false'}
-              onChange={(v) => onIncludeIdChange(v === 'true')}
-              fullWidth
-            />
-          </div>
-        </div>
-
-        {/* 第二排：生成數量、分隔符號 */}
-        <div className="flex flex-col gap-4 sm:flex-row">
+    <GlassCard padding="sm">
+      <div className="flex flex-col gap-3.5">
+        {/* 設定控制項：寬螢幕併為一列以縮小佔比 */}
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <SegmentedControl
+            label="性別"
+            options={genderOptions}
+            value={gender}
+            onChange={onGenderChange}
+            fullWidth
+          />
+          <SegmentedControl
+            label="流水編號"
+            options={includeIdOptions}
+            value={includeId ? 'true' : 'false'}
+            onChange={(v) => onIncludeIdChange(v === 'true')}
+            fullWidth
+          />
           <GlassInput
             label="生成數量"
             type="number"
             value={count.toString()}
             min={1}
             max={100}
-            description="最少 1 筆，最多 100 筆"
-            wrapperClassName="flex-1"
+            description="1 ~ 100 筆"
             onChange={(e) => {
               const value = e.target.value;
               if (value === '') { onCountChange(1); return; }
@@ -91,32 +82,32 @@ export const GeneratorForm = memo(function GeneratorForm({
             label="欄位分隔符號"
             value={separator}
             maxLength={5}
-            description="留空表示使用空白分隔"
-            wrapperClassName="flex-1"
+            description="留空為空白分隔"
             onChange={(e) => onSeparatorChange(e.target.value)}
           />
         </div>
 
-        {/* 使用須知 */}
-        <Alert
-          variant="warning"
-          title="使用須知"
-          description="所有資料皆隨機模擬生成，並非真實數據，且僅限用於格式學習、參考以及開發測試，請不要用於非法用途且用戶不應過度信賴網站內容，本網站不負任何法律責任，特此聲明。"
-        />
-
-        {/* 生成按鈕 */}
-        <GlassButton
-          variant="primary"
-          size="lg"
-          fullWidth
-          onClick={onGenerate}
-          aria-label={`生成 ${count} 筆資料，包含 ${enabledFieldCount} 個欄位`}
-        >
-          <span>生成資料</span>
-          <span className="opacity-70 text-xs font-normal">
-            {count} 筆 · {enabledFieldCount} 個欄位
-          </span>
-        </GlassButton>
+        {/* 底部：免責提示 + 生成按鈕，同一列並排以壓縮高度 */}
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-stretch">
+          <Alert
+            className="flex-1"
+            variant="warning"
+            description="所有資料皆隨機模擬生成，並非真實數據，僅供格式學習、參考與開發測試使用，請勿用於非法用途，本網站不負任何法律責任。"
+          />
+          <GlassButton
+            variant="primary"
+            size="lg"
+            onClick={onGenerate}
+            className="lg:w-56 lg:flex-shrink-0"
+            fullWidth
+            aria-label={`生成 ${count} 筆資料，包含 ${enabledFieldCount} 個欄位`}
+          >
+            <span>生成資料</span>
+            <span className="opacity-70 text-xs font-normal">
+              {count} 筆 · {enabledFieldCount} 個欄位
+            </span>
+          </GlassButton>
+        </div>
       </div>
     </GlassCard>
   );

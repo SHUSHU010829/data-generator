@@ -14,6 +14,7 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
+import { SlidersHorizontal } from 'lucide-react';
 import { GlassButton, GlassDialog } from '@/components/ui';
 
 import type { FieldConfig } from '@/types/generator';
@@ -23,18 +24,6 @@ interface FieldSelectorProps {
   fields: FieldConfig[];
   onFieldsChange: (fields: FieldConfig[]) => void;
 }
-
-/* 調整滑桿 icon */
-const SettingsIcon = () => (
-  <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
-    <line x1="1" y1="4" x2="14" y2="4" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round"/>
-    <line x1="1" y1="7.5" x2="14" y2="7.5" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round"/>
-    <line x1="1" y1="11" x2="14" y2="11" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round"/>
-    <circle cx="4.5" cy="4" r="1.75" fill="var(--bg-base,#fff)" stroke="currentColor" strokeWidth="1.25"/>
-    <circle cx="10" cy="7.5" r="1.75" fill="var(--bg-base,#fff)" stroke="currentColor" strokeWidth="1.25"/>
-    <circle cx="6" cy="11" r="1.75" fill="var(--bg-base,#fff)" stroke="currentColor" strokeWidth="1.25"/>
-  </svg>
-);
 
 export const FieldSelector = memo(function FieldSelector({ fields, onFieldsChange }: FieldSelectorProps) {
   const [open, setOpen] = useState(false);
@@ -85,7 +74,7 @@ export const FieldSelector = memo(function FieldSelector({ fields, onFieldsChang
           variant="secondary"
           size="sm"
           onClick={() => setOpen(true)}
-          iconLeft={<SettingsIcon />}
+          iconLeft={<SlidersHorizontal size={15} strokeWidth={2} />}
           aria-label={`欄位設定，目前已選 ${enabledCount} 個欄位`}
         >
           欄位設定
@@ -105,7 +94,7 @@ export const FieldSelector = memo(function FieldSelector({ fields, onFieldsChang
             .map((f) => (
               <span
                 key={f.key}
-                className="text-xs px-2 py-0.5 rounded-full bg-[var(--surface-glass)] border border-[var(--border-hairline)] text-[var(--text-secondary)]"
+                className="text-xs px-2 py-0.5 rounded-full bg-[var(--surface-elevated)] border border-[var(--border-hairline)] text-[var(--text-secondary)]"
               >
                 {f.label}
               </span>

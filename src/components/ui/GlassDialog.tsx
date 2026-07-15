@@ -2,6 +2,7 @@ import { useEffect, useRef, ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import clsx from 'clsx';
+import { X } from 'lucide-react';
 
 interface GlassDialogProps {
   open: boolean;
@@ -56,7 +57,7 @@ export function GlassDialog({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[1000] bg-black/30 backdrop-blur-[2px]"
+            className="fixed inset-0 z-[1000] bg-black/40"
             onClick={() => onOpenChange(false)}
             aria-hidden="true"
           />
@@ -97,11 +98,9 @@ export function GlassDialog({
                 type="button"
                 onClick={() => onOpenChange(false)}
                 aria-label="關閉"
-                className="flex items-center justify-center w-8 h-8 rounded-[var(--radius-sm)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-glass)] transition-colors focus-visible:outline-2 focus-visible:outline-accent"
+                className="flex items-center justify-center w-8 h-8 rounded-[var(--radius-sm)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-elevated)] transition-colors focus-visible:outline-2 focus-visible:outline-accent"
               >
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                  <path d="M2 2L14 14M14 2L2 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                </svg>
+                <X size={16} strokeWidth={2} aria-hidden="true" />
               </button>
             </div>
 

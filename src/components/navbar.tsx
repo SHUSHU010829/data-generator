@@ -1,3 +1,5 @@
+import { Database } from "lucide-react";
+
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { KbdHint } from "@/components/ui/KbdHint";
@@ -21,44 +23,7 @@ export const Navbar = () => {
               aria-hidden="true"
               className="w-7 h-7 rounded-[var(--radius-sm)] bg-accent flex items-center justify-center"
             >
-              <svg fill="none" height="14" viewBox="0 0 14 14" width="14">
-                <rect
-                  fill="white"
-                  fillOpacity="0.9"
-                  height="4"
-                  rx="1"
-                  width="4"
-                  x="1.5"
-                  y="1.5"
-                />
-                <rect
-                  fill="white"
-                  fillOpacity="0.7"
-                  height="4"
-                  rx="1"
-                  width="4"
-                  x="8.5"
-                  y="1.5"
-                />
-                <rect
-                  fill="white"
-                  fillOpacity="0.7"
-                  height="4"
-                  rx="1"
-                  width="4"
-                  x="1.5"
-                  y="8.5"
-                />
-                <rect
-                  fill="white"
-                  fillOpacity="0.9"
-                  height="4"
-                  rx="1"
-                  width="4"
-                  x="8.5"
-                  y="8.5"
-                />
-              </svg>
+              <Database size={16} strokeWidth={2} className="text-white" />
             </div>
             <span className="font-semibold text-sm text-[var(--text-primary)] group-hover:text-accent transition-colors duration-[var(--dur-fast)]">
               {siteConfig.name}

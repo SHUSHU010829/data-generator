@@ -12,7 +12,7 @@ const colorStyles = {
   pink: 'bg-[#FF375F]/15 text-[#FF375F]',
   green: 'bg-success/15 text-success',
   orange: 'bg-warning/15 text-warning',
-  default: 'bg-[var(--surface-glass)] text-[var(--text-secondary)]',
+  default: 'bg-[var(--surface-elevated)] text-[var(--text-secondary)]',
 };
 
 const sizeStyles = {

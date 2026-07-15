@@ -67,7 +67,7 @@ export function SegmentedControl<T extends string | number>({
               {isSelected && (
                 <motion.span
                   layoutId={layoutId}
-                  className="absolute inset-0 rounded-[var(--radius-sm)] bg-[var(--surface-elevated)] shadow-[0_1px_4px_rgba(0,0,0,0.12),0_1px_1px_rgba(255,255,255,0.6)_inset]"
+                  className="absolute inset-0 rounded-[var(--radius-sm)] bg-[var(--surface-elevated)] border border-[var(--border-hairline)]"
                   style={{ zIndex: 0 }}
                   transition={{
                     type: 'spring',

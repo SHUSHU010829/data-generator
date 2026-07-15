@@ -3,6 +3,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { motion } from 'framer-motion';
 import clsx from 'clsx';
+import { GripVertical } from 'lucide-react';
 import { GlassSwitch, GlassInput, SegmentedControl } from '@/components/ui';
 
 import type { FieldConfig, IdType, YearFormat } from '@/types/generator';
@@ -24,18 +25,6 @@ const yearFormatOptions: { value: YearFormat; label: string }[] = [
   { value: 'western', label: '西元年' },
   { value: 'minguo', label: '民國年' },
 ];
-
-/* 六點拖曳 handle icon */
-const DragIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-    <circle cx="4" cy="3" r="1.2" fill="currentColor"/>
-    <circle cx="4" cy="7" r="1.2" fill="currentColor"/>
-    <circle cx="4" cy="11" r="1.2" fill="currentColor"/>
-    <circle cx="10" cy="3" r="1.2" fill="currentColor"/>
-    <circle cx="10" cy="7" r="1.2" fill="currentColor"/>
-    <circle cx="10" cy="11" r="1.2" fill="currentColor"/>
-  </svg>
-);
 
 export const FieldCard = memo(function FieldCard({ field, onToggle, onOptionChange, onJsonKeyChange }: FieldCardProps) {
   const {
@@ -82,7 +71,7 @@ export const FieldCard = memo(function FieldCard({ field, onToggle, onOptionChan
           aria-label={`拖曳以調整 ${field.label} 的順序`}
           tabIndex={0}
         >
-          <DragIcon />
+          <GripVertical size={16} strokeWidth={2} />
         </div>
 
         {/* Switch 開關 */}

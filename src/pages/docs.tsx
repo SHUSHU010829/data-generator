@@ -1,3 +1,5 @@
+import { List } from "lucide-react";
+
 import { GlassCard } from "@/components/ui";
 import DefaultLayout from "@/layouts/default";
 
@@ -14,7 +16,10 @@ export default function DocsPage() {
               </p>
 
               <section className="mb-8">
-                <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-4">📋 目錄</h2>
+                <h2 className="flex items-center gap-2 text-2xl font-bold text-[var(--text-primary)] mb-4">
+                  <List size={22} strokeWidth={2} className="text-[var(--text-tertiary)]" aria-hidden="true" />
+                  目錄
+                </h2>
                 <ul className="list-disc list-inside space-y-2 text-[var(--text-secondary)]">
                   <li><a href="#id-card" className="text-[--color-accent] hover:underline">身分證字號</a></li>
                   <li><a href="#resident-cert" className="text-[--color-accent] hover:underline">居留證號碼</a></li>
@@ -35,8 +40,8 @@ export default function DocsPage() {
                 </ul>
                 <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-3">性別碼規則</h3>
                 <ul className="list-disc list-inside mb-4 text-[var(--text-secondary)]">
-                  <li><code className="bg-[var(--surface-glass)] px-2 py-0.5 rounded text-sm">1</code> = 男性</li>
-                  <li><code className="bg-[var(--surface-glass)] px-2 py-0.5 rounded text-sm">2</code> = 女性</li>
+                  <li><code className="bg-[var(--surface-elevated)] px-2 py-0.5 rounded text-sm">1</code> = 男性</li>
+                  <li><code className="bg-[var(--surface-elevated)] px-2 py-0.5 rounded text-sm">2</code> = 女性</li>
                 </ul>
               </section>
 
