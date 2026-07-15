@@ -60,6 +60,7 @@ export const GeneratorForm = memo(function GeneratorForm({
           />
           <GlassInput
             label="生成數量"
+            labelPlacement="outside"
             type="number"
             value={count.toString()}
             min={1}
@@ -80,6 +81,7 @@ export const GeneratorForm = memo(function GeneratorForm({
           />
           <GlassInput
             label="欄位分隔符號"
+            labelPlacement="outside"
             value={separator}
             maxLength={5}
             description="留空為空白分隔"

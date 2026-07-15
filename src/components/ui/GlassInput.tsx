@@ -9,11 +9,13 @@ interface GlassInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElemen
   suffix?: React.ReactNode;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   wrapperClassName?: string;
+  /* 標籤位置：floating 為框內浮動標籤；outside 為框外上方標籤（與 SegmentedControl 對齊用） */
+  labelPlacement?: 'floating' | 'outside';
 }
 
 export const GlassInput = forwardRef<HTMLInputElement, GlassInputProps>(
   function GlassInput(
-    { label, description, error, prefix, suffix, className, wrapperClassName, id: externalId, ...rest },
+    { label, description, error, prefix, suffix, className, wrapperClassName, id: externalId, labelPlacement = 'floating', ...rest },
     ref,
   ) {
     const autoId = useId();
@@ -22,9 +24,17 @@ export const GlassInput = forwardRef<HTMLInputElement, GlassInputProps>(
     const errId = `${id}-err`;
     const [focused, setFocused] = useState(false);
     const hasValue = rest.value !== '' && rest.value !== undefined && rest.value !== null;
+    const isOutside = labelPlacement === 'outside';
 
     return (
-      <div className={clsx('flex flex-col gap-1', wrapperClassName)}>
+      <div className={clsx('flex flex-col', isOutside ? 'gap-1.5' : 'gap-1', wrapperClassName)}>
+        {/* 框外標籤：樣式對齊 SegmentedControl 的標籤 */}
+        {isOutside && (
+          <label htmlFor={id} className="px-1 text-xs font-medium text-[var(--text-tertiary)]">
+            {label}
+          </label>
+        )}
+
         <div
           className={clsx(
             'relative flex items-center rounded-[var(--radius-md)]',
@@ -41,19 +51,22 @@ export const GlassInput = forwardRef<HTMLInputElement, GlassInputProps>(
             </span>
           )}
           <div className="relative flex-1">
-            <label
-              htmlFor={id}
-              className={clsx(
-                'absolute left-3 pointer-events-none',
-                'transition-all duration-[var(--dur-fast)] ease-[var(--ease-ios)]',
-                focused || hasValue
-                  ? 'top-1.5 text-[10px] font-medium text-[var(--text-tertiary)]'
-                  : 'top-1/2 -translate-y-1/2 text-sm text-[var(--text-secondary)]',
-                focused && 'text-accent',
-              )}
-            >
-              {label}
-            </label>
+            {/* 浮動標籤（僅 floating 模式） */}
+            {!isOutside && (
+              <label
+                htmlFor={id}
+                className={clsx(
+                  'absolute left-3 pointer-events-none',
+                  'transition-all duration-[var(--dur-fast)] ease-[var(--ease-ios)]',
+                  focused || hasValue
+                    ? 'top-1.5 text-[10px] font-medium text-[var(--text-tertiary)]'
+                    : 'top-1/2 -translate-y-1/2 text-sm text-[var(--text-secondary)]',
+                  focused && 'text-accent',
+                )}
+              >
+                {label}
+              </label>
+            )}
             <input
               ref={ref}
               id={id}
@@ -64,10 +77,9 @@ export const GlassInput = forwardRef<HTMLInputElement, GlassInputProps>(
               onFocus={() => setFocused(true)}
               onBlur={() => setFocused(false)}
               className={clsx(
-                'w-full bg-transparent outline-none',
-                'pt-5 pb-1.5 px-3 text-sm',
-                'text-[var(--text-primary)] placeholder-transparent',
-                'min-h-[52px]',
+                'w-full bg-transparent outline-none px-3 text-sm',
+                'text-[var(--text-primary)]',
+                isOutside ? 'min-h-[40px] py-2' : 'pt-5 pb-1.5 min-h-[52px] placeholder-transparent',
                 className,
               )}
               {...rest}
