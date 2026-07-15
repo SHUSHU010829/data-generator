@@ -43,7 +43,8 @@ export function generateSingleData(config: GeneratorConfig): FakeData {
   }
 
   const taiwanName = generateTaiwanName(actualGender);
-  const englishName = generateEnglishName(actualGender);
+  // 英文名由中文姓名拼音衍生，維持三者一致
+  const englishName = generateEnglishName(taiwanName);
 
   return {
     taiwanName,

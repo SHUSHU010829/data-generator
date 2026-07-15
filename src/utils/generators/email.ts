@@ -15,8 +15,8 @@ const EMAIL_DOMAINS = [
  * @returns 電子郵件地址
  */
 export function generateEmail(englishName: string): string {
-  // 解析英文姓名
-  const parts = englishName.toLowerCase().split(' ');
+  // 解析英文姓名（去除拼音連字號，例如 yi-chun → yichun）
+  const parts = englishName.toLowerCase().replace(/-/g, '').split(' ');
   const firstName = parts[0] || 'user';
   const lastName = parts[1] || 'name';
 
