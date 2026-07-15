@@ -119,7 +119,7 @@ export function DataTable({ data, separator, fields, includeId }: DataTableProps
       <Tooltip content="點擊複製" placement="top">
         <button
           className={clsx(
-            'cursor-pointer rounded px-1 py-0.5',
+            'relative cursor-pointer rounded px-1 py-0.5',
             'text-[var(--text-primary)] hover:text-accent',
             'transition-colors duration-[var(--dur-fast)]',
             'focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2',
@@ -129,8 +129,12 @@ export function DataTable({ data, separator, fields, includeId }: DataTableProps
           aria-label={`複製${fieldLabel}：${value}`}
         >
           {value}
+          {/* 絕對定位，避免打勾出現時撐開 cell 造成表格跳動 */}
           {isCopied && (
-            <span className="ml-1.5 inline-flex align-middle text-success" aria-live="polite">
+            <span
+              className="absolute left-full top-1/2 -translate-y-1/2 ml-1 inline-flex text-success"
+              aria-live="polite"
+            >
               <Check size={13} strokeWidth={3} aria-hidden="true" />
             </span>
           )}
@@ -233,7 +237,7 @@ export function DataTable({ data, separator, fields, includeId }: DataTableProps
                         </span>
                         <button
                           className={clsx(
-                            'text-left text-sm cursor-pointer',
+                            'relative self-start text-left text-sm cursor-pointer',
                             'text-[var(--text-primary)] hover:text-accent',
                             'transition-colors duration-[var(--dur-fast)]',
                             'focus-visible:outline-2 focus-visible:outline-accent rounded px-1',
@@ -244,8 +248,12 @@ export function DataTable({ data, separator, fields, includeId }: DataTableProps
                           aria-label={`複製${field.label}：${row[field.key]}`}
                         >
                           {row[field.key]}
+                          {/* 絕對定位，避免打勾出現時撐開版面造成跳動 */}
                           {copiedId === `mobile-${field.key}-${index}` && (
-                            <span className="ml-1.5 inline-flex align-middle text-success" aria-live="polite">
+                            <span
+                              className="absolute left-full top-1/2 -translate-y-1/2 ml-1 inline-flex text-success"
+                              aria-live="polite"
+                            >
                               <Check size={13} strokeWidth={3} aria-hidden="true" />
                             </span>
                           )}

@@ -4,10 +4,11 @@
 
 @theme {
   --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang TC", system-ui, sans-serif;
-  --color-accent: #0A84FF;
-  --color-success: #30D158;
-  --color-warning: #FF9F0A;
-  --color-danger: #FF3B30;
+  /* 強調色：Linear 風靛紫色系 */
+  --color-accent: #5E6AD2;
+  --color-success: #3FB950;
+  --color-warning: #D29922;
+  --color-danger: #E5534B;
 }
 
 @layer base {
