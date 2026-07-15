@@ -1,3 +1,5 @@
+import { random } from '../random';
+
 /**
  * RFC 2606 保留網域
  * 這些網域由 IANA 保留給文件與測試用途，永遠不會路由到真實信箱，
@@ -15,8 +17,8 @@ const EMAIL_DOMAINS = [
  * @returns 電子郵件地址
  */
 export function generateEmail(englishName: string): string {
-  // 解析英文姓名
-  const parts = englishName.toLowerCase().split(' ');
+  // 解析英文姓名（去除拼音連字號，例如 yi-chun → yichun）
+  const parts = englishName.toLowerCase().replace(/-/g, '').split(' ');
   const firstName = parts[0] || 'user';
   const lastName = parts[1] || 'name';
 
@@ -25,14 +27,14 @@ export function generateEmail(englishName: string): string {
     `${firstName}.${lastName}`,           // john.doe
     `${firstName}${lastName}`,            // johndoe
     `${firstName}_${lastName}`,           // john_doe
-    `${firstName}${Math.floor(Math.random() * 1000)}`, // john123
+    `${firstName}${Math.floor(random() * 1000)}`, // john123
     `${lastName}.${firstName}`,           // doe.john
   ];
 
-  const randomFormat = formats[Math.floor(Math.random() * formats.length)];
+  const randomFormat = formats[Math.floor(random() * formats.length)];
 
   // 隨機選擇網域
-  const domain = EMAIL_DOMAINS[Math.floor(Math.random() * EMAIL_DOMAINS.length)];
+  const domain = EMAIL_DOMAINS[Math.floor(random() * EMAIL_DOMAINS.length)];
 
   return `${randomFormat}@${domain}`;
 }

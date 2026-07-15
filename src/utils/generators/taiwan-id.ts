@@ -1,6 +1,7 @@
 // 台灣身分證字號生成器
 
 import { cityCodeMap, cityCodes } from '../../data/id-mappings';
+import { random } from '../random';
 
 /**
  * 計算身分證檢查碼
@@ -30,7 +31,7 @@ function calculateCheckDigit(idPrefix: string): number {
  */
 export function generateTaiwanId(gender: 'male' | 'female'): string {
   // 隨機選擇縣市代碼
-  const cityCode = cityCodes[Math.floor(Math.random() * cityCodes.length)];
+  const cityCode = cityCodes[Math.floor(random() * cityCodes.length)];
 
   // 性別碼：1=男性, 2=女性
   const genderCode = gender === 'male' ? '1' : '2';
@@ -38,7 +39,7 @@ export function generateTaiwanId(gender: 'male' | 'female'): string {
   // 生成 7 個隨機數字
   let randomDigits = '';
   for (let i = 0; i < 7; i++) {
-    randomDigits += Math.floor(Math.random() * 10);
+    randomDigits += Math.floor(random() * 10);
   }
 
   // 組合前 9 碼

@@ -17,6 +17,7 @@ export interface GeneratorConfig {
   count: number;
   separator: string; // 欄位分隔符號
   yearFormat: YearFormat; // 年份格式（西元年或民國年）
+  seed?: string; // 亂數種子；留空為每次隨機，相同種子可重現同一批資料
 }
 
 // 可選欄位類型

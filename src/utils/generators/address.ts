@@ -1,12 +1,13 @@
 // 地址生成器
 
 import { taiwanAddresses, streetNames, lanes, alleyNumbers, houseNumbers } from '../../data/taiwan-addresses';
+import { random } from '../random';
 
 /**
  * 從陣列中隨機選擇一個元素
  */
 function randomChoice<T>(array: T[]): T {
-  return array[Math.floor(Math.random() * array.length)];
+  return array[Math.floor(random() * array.length)];
 }
 
 /**
@@ -19,7 +20,7 @@ export function generateAddress(): { zipCode: string; address: string } {
   const street = randomChoice(streetNames);
 
   // 60% 機率有巷
-  const hasLane = Math.random() < 0.6;
+  const hasLane = random() < 0.6;
   let address = `${addressData.city}${district.name}${street}`;
 
   if (hasLane) {
@@ -27,7 +28,7 @@ export function generateAddress(): { zipCode: string; address: string } {
     address += `${lane}巷`;
 
     // 40% 機率有弄
-    const hasAlley = Math.random() < 0.4;
+    const hasAlley = random() < 0.4;
     if (hasAlley) {
       const alley = randomChoice(alleyNumbers);
       address += `${alley}弄`;
@@ -38,8 +39,8 @@ export function generateAddress(): { zipCode: string; address: string } {
   address += `${houseNumber}號`;
 
   // 30% 機率有樓層
-  if (Math.random() < 0.3) {
-    const floor = Math.floor(Math.random() * 12) + 1;
+  if (random() < 0.3) {
+    const floor = Math.floor(random() * 12) + 1;
     address += `${floor}樓`;
   }
 

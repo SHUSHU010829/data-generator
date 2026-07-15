@@ -8,11 +8,13 @@ interface GeneratorFormProps {
   count: number;
   separator: string;
   includeId: boolean;
+  seed: string;
   enabledFieldCount: number;
   onGenderChange: (gender: Gender) => void;
   onCountChange: (count: number) => void;
   onSeparatorChange: (separator: string) => void;
   onIncludeIdChange: (includeId: boolean) => void;
+  onSeedChange: (seed: string) => void;
   onGenerate: () => void;
 }
 
@@ -32,11 +34,13 @@ export const GeneratorForm = memo(function GeneratorForm({
   count,
   separator,
   includeId,
+  seed,
   enabledFieldCount,
   onGenderChange,
   onCountChange,
   onSeparatorChange,
   onIncludeIdChange,
+  onSeedChange,
   onGenerate,
 }: GeneratorFormProps) {
   return (
@@ -88,6 +92,17 @@ export const GeneratorForm = memo(function GeneratorForm({
             onChange={(e) => onSeparatorChange(e.target.value)}
           />
         </div>
+
+        {/* 亂數種子：留空為每次隨機，輸入相同種子可重現同一批資料 */}
+        <GlassInput
+          label="亂數種子（選填）"
+          labelPlacement="outside"
+          value={seed}
+          maxLength={32}
+          placeholder="留空為每次隨機"
+          description="輸入相同種子可重現同一批資料，方便回歸測試比對"
+          onChange={(e) => onSeedChange(e.target.value)}
+        />
 
         {/* 底部：免責提示 + 生成按鈕，同一列並排以壓縮高度 */}
         <div className="flex flex-col gap-3 lg:flex-row lg:items-stretch">
